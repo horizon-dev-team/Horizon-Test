@@ -2,4 +2,6 @@
 
 // BEGIN_INCLUDE
 #include "code\__DEFINES\test_defines.dm"
+#include "code\__DEFINES\cm13_span_macros.dm"
+#include "code\__DEFINES\vehicle_defines.dm"
 // END_INCLUDE

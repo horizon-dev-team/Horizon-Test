@@ -19,4 +19,10 @@
 
 // BEGIN_INCLUDE
 #include "code\modules\admin\all_verb_panel.dm"
+// VEHICLE MAP TEMPLATES
+#include "code\controllers\subsystem\processing\fastobj.dm"
+#include "code\controllers\subsystem\processing\slowobj.dm"
+#include "code\controllers\subsystem\interior.dm"
+#include "code\datums\vehicles.dm"
+#include "code\modules\vehicles\_vehicle_includes.dm"
 // END_INCLUDE
