@@ -19,10 +19,17 @@
 
 // BEGIN_INCLUDE
 #include "code\modules\admin\all_verb_panel.dm"
+#include "code\__HELPERS\vehicle_compat_stubs.dm"
+#include "code\_globalvars\lists\vehicle_globals.dm"
+#include "code\controllers\subsystem\interior.dm"
 // VEHICLE MAP TEMPLATES
 #include "code\controllers\subsystem\processing\fastobj.dm"
 #include "code\controllers\subsystem\processing\slowobj.dm"
-#include "code\controllers\subsystem\interior.dm"
+#include "code\datums\cause_data.dm"
+#include "code\datums\turf_reservation\interior.dm"
 #include "code\datums\vehicles.dm"
+#include "code\game\machinery\camera\vehicle_camera.dm"
+#include "code\modules\vehicles\_type_stubs\vehicle_type_stubs.dm"
 #include "code\modules\vehicles\_vehicle_includes.dm"
+#include "code\modules\vehicles\actions\vehicle_actions.dm"
 // END_INCLUDE

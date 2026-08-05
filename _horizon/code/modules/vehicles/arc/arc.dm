@@ -33,8 +33,8 @@
 
 	hardpoints_allowed = list(
 		/obj/item/hardpoint/locomotion/arc_wheels,
-		/obj/item/hardpoint/primary/arc_sentry,
-		/obj/item/hardpoint/support/arc_antenna,
+//		/obj/item/hardpoint/primary/arc_sentry,
+//		/obj/item/hardpoint/support/arc_antenna,
 	)
 
 	seats = list(
@@ -47,7 +47,7 @@
 
 	vehicle_flags = VEHICLE_CLASS_LIGHT
 
-//	mob_size_required_to_hit = MOB_SIZE_XENO
+//      mob_size_required_to_hit = MOB_SIZE_XENO
 
 	dmg_multipliers = list(
 		"all" = 1,
@@ -105,15 +105,19 @@
 	SIGNAL_HANDLER
 
 	if(antenna_deployed)
-		START_PROCESSING(SSslowobj, src)
+		START_PROCESSING(SSobj, src)
 
 	else
-		STOP_PROCESSING(SSslowobj, src)
+		STOP_PROCESSING(SSobj, src)
 
+// SSminimaps not ported to TG; clear_tacmap is a no-op stub retained for API compatibility.
 /obj/vehicle/multitile/arc/proc/clear_tacmap()
+	return
+/*
 	for(var/datum/weakref/xeno as anything in minimap_added)
 		SSminimaps.remove_marker(xeno.resolve())
 		minimap_added.Remove(xeno)
+*/
 
 /obj/vehicle/multitile/arc/process()
 	var/turf/arc_turf = get_turf(src)
@@ -125,6 +129,8 @@
 		clear_tacmap()
 		return
 /*
+	// Minimap/xeno wallhack block: SSminimaps and GLOB.living_xeno_list not ported to TG.
+	// Kept commented for reference; restore once minimap + xeno systems are ported.
 	for(var/mob/living/carbon/xenomorph/current_xeno as anything in GLOB.living_xeno_list)
 		var/turf/xeno_turf = get_turf(current_xeno)
 		if(!is_ground_level(xeno_turf.z))
@@ -156,7 +162,7 @@
 	if(!.)
 		return
 
-	give_action(M, /datum/action/human_action/toggle_arc_antenna)
+	give_action(M, /datum/action/innate/toggle_arc_antenna)
 
 /obj/vehicle/multitile/arc/add_seated_verbs(mob/living/M, seat)
 	if(!M.client)
@@ -185,7 +191,7 @@
 
 /obj/vehicle/multitile/arc/initialize_cameras(change_tag = FALSE)
 	if(!camera)
-		camera = new /obj/structure/machinery/camera/vehicle(src)
+		camera = new /obj/machinery/camera/vehicle(src)
 	if(change_tag)
 		camera.c_tag = "#[rand(1,100)] M540-B \"[nickname]\" ARC"
 		if(camera_int)
@@ -195,6 +201,10 @@
 		if(camera_int)
 			camera_int.c_tag = camera.c_tag + " interior"
 
+/*
+// XENO REMOVED: MouseDrop_T block allowed xenomorphs to crawl under a destroyed ARC.
+// isxeno() always returns FALSE in TG (no xenos) so this block was unreachable.
+// Kept commented for reference; restore once xeno system is ported.
 /obj/vehicle/multitile/arc/MouseDrop_T(mob/M, mob/user)
 	. = ..()
 	if((M != user) || !isxeno(user))
@@ -228,6 +238,7 @@
 
 	user.forceMove(current_turf)
 	to_chat(user, SPAN_XENO("We crawl to the other side of [src]."))
+*/
 
 /*
 ** PRESETS SPAWNERS

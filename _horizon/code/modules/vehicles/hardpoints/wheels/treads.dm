@@ -26,9 +26,13 @@
 	move_max_momentum = 5 //same top speed, but takes 5 tiles to reach it
 
 /obj/item/hardpoint/locomotion/treads/on_install(obj/vehicle/multitile/V)
-	for(var/obj/item/hardpoint/support/overdrive_enhancer/OD in V.hardpoints)
-		if(OD.get_integrity() > 0)
-			OD.apply_buff(V)
+	// CM13 overdrive_enhancer integration - commented out for TG port.
+	// /obj/item/hardpoint/support/overdrive_enhancer is defined in
+	// hardpoints/support/overdrive.dm which is currently commented out
+	// in _vehicle_includes.dm. Re-enable here when overdrive.dm is re-enabled.
+	// for(var/obj/item/hardpoint/support/overdrive_enhancer/OD in V.hardpoints)
+	// 	if(OD.get_integrity() > 0)
+	// 		OD.apply_buff(V)
 	if(move_delay)
 		V.move_delay = move_delay
 	if(move_max_momentum)
@@ -39,9 +43,10 @@
 		V.move_turn_momentum_loss_factor = move_turn_momentum_loss_factor
 
 /obj/item/hardpoint/locomotion/treads/deactivate()
-	for(var/obj/item/hardpoint/support/overdrive_enhancer/OD in owner.hardpoints)
-		if(OD.get_integrity() > 0)
-			OD.remove_buff(owner)
+	// CM13 overdrive_enhancer integration - commented out for TG port.
+	// for(var/obj/item/hardpoint/support/overdrive_enhancer/OD in owner.hardpoints)
+	// 	if(OD.get_integrity() > 0)
+	// 		OD.remove_buff(owner)
 	owner.move_delay = initial(owner.move_delay)
 	owner.move_max_momentum = initial(owner.move_max_momentum)
 	owner.move_momentum_build_factor = initial(owner.move_momentum_build_factor)

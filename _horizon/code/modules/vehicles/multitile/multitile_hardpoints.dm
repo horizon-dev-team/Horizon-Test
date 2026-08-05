@@ -50,7 +50,9 @@
 
 //What to do if all ofthe installed modules have been broken
 /obj/vehicle/multitile/proc/handle_all_modules_broken()
-	update_minimap_icon(TRUE)
+	// MINIMAP DISABLED: update_minimap_icon(TRUE) — TG has no SSminimaps;
+	// update_minimap_icon() is a no-op stub on /obj/vehicle/multitile.
+	// update_minimap_icon(TRUE)
 	return
 
 /obj/vehicle/multitile/proc/deactivate_all_hardpoints()
@@ -130,8 +132,8 @@
 		PC.loaded = null
 		playsound(loc, 'sound/machines/hydraulics_2.ogg', 40, 1)
 		PC.update_icon()
-//	else
-//		user.temp_drop_inv_item(HP, 0)
+//      else
+//	      user.temp_drop_inv_item(HP, 0)
 
 	add_hardpoint(HP, user)
 
@@ -220,7 +222,9 @@
 	HP.on_install(src)
 	HP.rotate(turning_angle(HP.dir, dir))
 
-	update_minimap_icon()
+	// MINIMAP DISABLED: update_minimap_icon() — TG has no SSminimaps;
+	// update_minimap_icon() is a no-op stub on /obj/vehicle/multitile.
+	// update_minimap_icon()
 	update_icon()
 
 //General proc for taking off hardpoints

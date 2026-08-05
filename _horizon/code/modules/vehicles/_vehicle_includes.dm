@@ -52,7 +52,7 @@
 //#include "hardpoints\support\artillery.dm"
 //#include "hardpoints\support\flare.dm"
 //#include "hardpoints\support\iwsa.dm"
-//#include "hardpoints\support\overdrive.dm"
+#include "hardpoints\support\overdrive.dm"
 #include "hardpoints\wheels\locomotion.dm"
 #include "hardpoints\wheels\apc_wheels.dm"
 #include "hardpoints\wheels\arc_wheels.dm"

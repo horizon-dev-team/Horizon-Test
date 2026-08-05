@@ -9,7 +9,7 @@
 
 	// XENO REMOVED: powerloader clamp logic
 	// if(ispowerclamp(O))
-	// 	...
+	//      ...
 
 	// Are we trying to remove stuff?
 	if(iscrowbar(O))
@@ -79,11 +79,11 @@
 
 	// XENO REMOVED: grenade throwing logic (CM13-specific grenade type)
 	// if(istype(O, /obj/item/explosive/grenade))
-	// 	...
+	//      ...
 
 	// XENO REMOVED: motion detector scanning (CM13-specific device)
 	// if(istype(O, /obj/item/device/motiondetector))
-	// 	...
+	//      ...
 
 	if(user.a_intent != INTENT_HARM)
 		handle_player_entrance(user)
@@ -93,8 +93,11 @@
 
 // Frame repairs on the vehicle itself
 /obj/vehicle/multitile/proc/handle_repairs(obj/item/O, mob/user)
-	if(user.action_busy)
-		return
+	// CM13 used `user.action_busy` here to bail out if a repair was already in
+	// progress. TG has no `action_busy` var; TG's `do_after` (which
+	// `cm_do_after` bridges to) tracks busy state internally and returns FALSE
+	// if the user is already busy, so the early-out is no longer needed —
+	// the while-loop below will simply exit on its first iteration instead.
 	var/max_hp = max_integrity
 	if(get_integrity() > max_hp)
 		update_integrity(max_hp)
@@ -192,7 +195,7 @@
 
 // XENO REMOVED: /obj/vehicle/multitile/attack_alien — entire proc commented out
 // /obj/vehicle/multitile/attack_alien(mob/living/carbon/xenomorph/X)
-// 	...
+//      ...
 
 //Differentiates between damage types from different bullets
 //Applies a linear transformation to bullet damage that will generally decrease damage done
@@ -204,7 +207,7 @@
 
 	// XENO REMOVED: IFF bullet check
 	// if(P.runtime_iff_group && get_target_lock(P.runtime_iff_group))
-	// 	return
+	//      return
 
 	take_damage_type(damage * 0.33, dam_type, firer)
 
@@ -329,8 +332,11 @@
 
 	if(!enter_time)
 		enter_time = entrance_speed
-		if(dragged_atom)
-			enter_time = 2 SECONDS
+		// GRAB SYSTEM DISABLED: dragged_atom was previously populated by a
+		// now-commented-out grab check above; without it the var is undeclared.
+		// The 2 SECONDS enter_time for dragging a pulled atom is skipped.
+		// if(dragged_atom)
+		//      enter_time = 2 SECONDS
 
 	to_chat(M, span_notice(enter_msg))
 	if(!cm_do_after(M, enter_time, src, INTERRUPT_NO_NEEDHAND))
@@ -400,9 +406,12 @@
 		currently_dragged = G.affecting
 */
 
-	if(currently_dragged != dragged_atom)
-		to_chat(user, span_warning("You stop fitting [dragged_atom] inside \the [src]!"))
-		return
+	// GRAB SYSTEM DISABLED: currently_dragged was previously populated by a
+	// now-commented-out grab check above; without it the var is undeclared.
+	// The "stop fitting" early-return on a different dragged atom is skipped.
+	// if(currently_dragged != dragged_atom)
+	//      to_chat(user, span_warning("You stop fitting [dragged_atom] inside \the [src]!"))
+	//      return
 
 	var/success = interior.enter(dragged_atom, entrance_used)
 	if(success)

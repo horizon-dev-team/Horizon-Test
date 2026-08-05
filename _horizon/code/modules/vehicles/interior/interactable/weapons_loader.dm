@@ -6,9 +6,9 @@
 
 	anchored = TRUE
 	density = TRUE
-//	unacidable = TRUE
-//	unslashable = TRUE
-//	explo_proof = TRUE
+//      unacidable = TRUE
+//      unslashable = TRUE
+//      explo_proof = TRUE
 
 	var/obj/vehicle/multitile/vehicle = null
 
@@ -98,7 +98,7 @@
 
 	to_chat(user, SPAN_NOTICE("You begin reloading \the [HP]."))
 
-	if(!do_after(user, 10, INTERRUPT_ALL, BUSY_ICON_FRIENDLY))
+	if(!do_after(user, 10, target=src))
 		to_chat(user, SPAN_WARNING("Something interrupted you while reloading \the [HP]."))
 		return
 

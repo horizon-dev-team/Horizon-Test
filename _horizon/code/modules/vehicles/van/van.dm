@@ -87,23 +87,23 @@
 	for(var/I in GLOB.player_list)
 		add_default_image(SSdcs, I)
 
-/obj/vehicle/multitile/van/BlockedPassDirs(atom/movable/mover, target_dir)
+/obj/vehicle/multitile/van/CanPass(atom/movable/mover, border_dir)
 	if(mover in mobs_under) //can't collide with the thing you're buckled to
-		return NO_BLOCKED_MOVEMENT
+		return TRUE
 
 	if(isliving(mover))
 		var/mob/living/M = mover
 		if(M.mob_flags & SQUEEZE_UNDER_VEHICLES)
 			add_under_van(M)
-			return NO_BLOCKED_MOVEMENT
+			return TRUE
 
 		if(M.body_position == LYING_DOWN)
-			return NO_BLOCKED_MOVEMENT
+			return TRUE
 
 		if(M.mob_size >= MOB_SIZE_IMMOBILE && next_push < world.time)
-			if(try_move(target_dir, force=TRUE))
+			if(try_move(border_dir, force=TRUE))
 				next_push = world.time + push_delay
-				return NO_BLOCKED_MOVEMENT
+				return TRUE
 
 	return ..()
 
@@ -177,13 +177,13 @@
 	if(user.z != z)
 		return ..()
 
-	if(iswelder(O) && health >= initial(health))
+	if(iswelder(O) && get_integrity() >= max_integrity)
 		if(!HAS_TRAIT(O, TRAIT_TOOL_BLOWTORCH))
 			to_chat(user, SPAN_WARNING("You need a stronger blowtorch!"))
 			return
 		var/obj/item/hardpoint/H
 		for(var/obj/item/hardpoint/potential_hardpoint in hardpoints)
-			if(potential_hardpoint.get_integrity() < initial(potential_hardpoint.get_integrity()))
+			if(potential_hardpoint.get_integrity() < potential_hardpoint.max_integrity)
 				H = potential_hardpoint
 				break
 
@@ -225,6 +225,10 @@
 	if(!seats[VEHICLE_DRIVER])
 		return FALSE
 
+/*
+	// CM13 barricade/cryopod ramming rules — TG has different barricade
+	// structure and no cryopods; commented out until proper ramming logic
+	// is implemented for TG structures.
 	if(istype(A, /obj/structure/barricade/plasteel))
 		return ..()
 
@@ -235,6 +239,7 @@
 	   istype(A, /obj/structure/machinery/cryopod)) //Can no longer runover cryopods
 
 		return FALSE
+*/
 
 	return ..()
 

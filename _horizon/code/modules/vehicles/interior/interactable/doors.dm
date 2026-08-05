@@ -5,9 +5,9 @@
 	icon_state = "vomit_1"
 	layer = INTERIOR_DOOR_LAYER
 
-//	unacidable = TRUE
-//	unslashable = TRUE
-//	explo_proof = TRUE
+//      unacidable = TRUE
+//      unslashable = TRUE
+//      explo_proof = TRUE
 
 	// The interior interior this exit is tied to
 	var/datum/interior/interior = null
@@ -34,7 +34,7 @@
 		exit_time = 2 SECONDS
 
 	to_chat(M, SPAN_NOTICE("You start climbing out of \the [interior.exterior]."))
-	if(!do_after(M, exit_time, INTERRUPT_NO_NEEDHAND, BUSY_ICON_GENERIC))
+	if(!do_after(M, exit_time, target=src, timed_action_flags=INTERRUPT_NO_NEEDHAND))
 		to_chat(M, SPAN_WARNING("Something has interrupted you."))
 		return
 
@@ -49,6 +49,7 @@
 			interior.exit(G.grabbed_thing)
 
 	interior.exit(M)
+// XENO BLOCK DISABLED: attack_alien commented out per refactor decision.
 /*
 /obj/structure/interior_exit/attack_alien(mob/living/carbon/xenomorph/M, dam_bonus)
 	to_chat(M, SPAN_NOTICE("You start climbing out of \the [interior.exterior]."))
@@ -62,7 +63,7 @@
 /obj/structure/interior_exit/vehicle/attackby(obj/item/object, mob/user)
 	if(istype(object, /obj/item/explosive/grenade))
 		var/obj/item/explosive/grenade/nade = object
-		if(nade.antigrief_protection && user.faction == FACTION_MARINE && explosive_antigrief_check(nade, user))
+		if(nade.antigrief_protection && explosive_antigrief_check(nade, user))
 			to_chat(user, SPAN_WARNING("\The [nade.name]'s safe-area accident inhibitor prevents you from priming the grenade!"))
 			// Let staff know, in case someone's actually about to try to grief
 			msg_admin_niche("[key_name(user)] attempted to prime \a [nade.name] in [get_area(src)] [ADMIN_JMP(src.loc)]")
@@ -70,14 +71,14 @@
 
 		user.visible_message(SPAN_WARNING("[user] takes position to throw [nade] through the door."),
 		SPAN_WARNING("You take position to throw [nade] through the door."))
-		if(!do_after(user, 1 SECONDS, INTERRUPT_ALL, BUSY_ICON_HOSTILE))
+		if(!do_after(user, 1 SECONDS, target=src, timed_action_flags=INTERRUPT_ALL))
 			return
 
 		user.visible_message(SPAN_WARNING("[user] throws [nade] through the door!"),
 		SPAN_WARNING("You throw [nade] through the door."))
 
 		var/turf/exit_turf = get_exit_turf()
-		user.drop_held_item()
+		user.dropItemToGround(object)
 		interior.exit(nade, exit_turf)
 		if(!nade.active)
 			nade.activate(user)
@@ -134,7 +135,7 @@
 		exit_time = 2 SECONDS
 
 	to_chat(M, SPAN_NOTICE("You start climbing out of \the [interior.exterior]."))
-	if(!do_after(M, exit_time, INTERRUPT_NO_NEEDHAND, BUSY_ICON_GENERIC))
+	if(!do_after(M, exit_time, target=src, timed_action_flags=INTERRUPT_NO_NEEDHAND))
 		to_chat(M, SPAN_WARNING("Something has interrupted you."))
 		return
 
@@ -152,6 +153,8 @@
 
 	interior.exit(M, exit_turf)
 
+// XENO BLOCK DISABLED: attack_alien commented out per refactor decision.
+/*
 /obj/structure/interior_exit/vehicle/attack_alien(mob/living/carbon/xenomorph/M, dam_bonus)
 	to_chat(M, SPAN_NOTICE("You start climbing out of \the [interior.exterior]."))
 	if(!do_after(M, 1 SECONDS, INTERRUPT_NO_NEEDHAND, BUSY_ICON_GENERIC))
@@ -159,3 +162,4 @@
 	else
 		interior.exit(M, get_exit_turf())
 	return XENO_NO_DELAY_ACTION
+*/

@@ -2,9 +2,9 @@
 /obj/structure/bed/chair/comfy/vehicle
 	name = "seat"
 
-//	unacidable = TRUE
-//	unslashable = TRUE
-//	explo_proof = TRUE
+//      unacidable = TRUE
+//      unslashable = TRUE
+//      explo_proof = TRUE
 	can_rotate = FALSE
 
 	//you want these chairs to not be easily obscured by objects
@@ -43,7 +43,7 @@
 		M.unset_interaction()
 		vehicle.set_seated_mob(seat, null)
 		if(M.client)
-			M.client.change_view(GLOB.world_view_size, vehicle)
+			M.client.change_view(world.view)
 			M.client.set_pixel_x(0)
 			M.client.set_pixel_y(0)
 			M.reset_view()
@@ -53,11 +53,11 @@
 			return
 		vehicle.set_seated_mob(seat, M)
 		if(M && M.client)
-			M.client.change_view(8, vehicle)
+			M.client.change_view(8)
 
 /obj/structure/bed/chair/comfy/vehicle/clicked(mob/user, list/mods) // If you're buckled, you can shift-click on the seat in order to return to camera-view
 	if(user == buckled_mob && mods[SHIFT_CLICK] && !user.is_mob_incapacitated())
-		user.client.change_view(8, vehicle)
+		user.client.change_view(8)
 		vehicle.set_seated_mob(seat, user)
 		return TRUE
 	else
@@ -73,15 +73,15 @@
 	desc = "Comfortable seat for a driver."
 	seat = VEHICLE_DRIVER
 
-/obj/structure/bed/chair/comfy/vehicle/driver/do_buckle(mob/target, mob/user)
+/obj/structure/bed/chair/comfy/vehicle/driver/user_buckle_mob(mob/living/M, mob/user, check_loc = TRUE)
 	required_skill = vehicle.required_skill
-	if(!skillcheck(target, SKILL_VEHICLE, required_skill))
-		if(target == user)
+	if(!skillcheck(M, SKILL_VEHICLE, required_skill))
+		if(M == user)
 			to_chat(user, SPAN_WARNING("You have no idea how to drive this thing!"))
 		return FALSE
 
 	if(vehicle)
-		vehicle.vehicle_faction = target.faction
+		vehicle.vehicle_faction = M.faction
 
 	return ..()
 
@@ -92,10 +92,10 @@
 	seat = VEHICLE_GUNNER
 	required_skill = SKILL_VEHICLE_CREWMAN
 
-/obj/structure/bed/chair/comfy/vehicle/gunner/do_buckle(mob/target, mob/user)
+/obj/structure/bed/chair/comfy/vehicle/gunner/user_buckle_mob(mob/living/M, mob/user, check_loc = TRUE)
 	// Gunning always requires crewman-level skill
-	if(!skillcheck(target, SKILL_VEHICLE, required_skill))
-		if(target == user)
+	if(!skillcheck(M, SKILL_VEHICLE, required_skill))
+		if(M == user)
 			to_chat(user, SPAN_WARNING("You have no idea how to operate the weapons on this thing!"))
 		return FALSE
 
@@ -106,23 +106,25 @@
 				to_chat(user, SPAN_WARNING("Your programming does not allow you to use heavy weaponry."))
 			else
 				to_chat(user, SPAN_WARNING("You are unable to use heavy weaponry."))
-			return
-		if(MODE_HAS_MODIFIER(/datum/gamemode_modifier/ceasefire))
-			to_chat(user, SPAN_WARNING("You will not break the ceasefire by doing that!"))
 			return FALSE
+//		if(MODE_HAS_MODIFIER(/datum/gamemode_modifier/ceasefire))
+//			to_chat(user, SPAN_WARNING("You will not break the ceasefire by doing that!"))
+//			return FALSE
 
-	for(var/obj/item/I in user.contents)		//prevents shooting while zoomed in, but zoom can still be activated and used without shooting
+	for(var/obj/item/I in user.contents)	    //prevents shooting while zoomed in, but zoom can still be activated and used without shooting
 		if(I.zoom)
 			I.zoom(user)
 
 	if(vehicle)
-		vehicle.vehicle_faction = target.faction
+		vehicle.vehicle_faction = M.faction
 
 	return ..()
 
 /obj/structure/bed/chair/comfy/vehicle/attackby(obj/item/W, mob/living/user)
 	return
 
+// XENO BLOCK DISABLED: attack_alien commented out per refactor decision.
+/*
 /obj/structure/bed/chair/comfy/vehicle/attack_alien(mob/living/carbon/xenomorph/user)
 	if(user.is_mob_incapacitated() || !Adjacent(user))
 		return
@@ -130,7 +132,10 @@
 	if(buckled_mob)
 		manual_unbuckle(user)
 		return
+*/
 
+// XENO BLOCK DISABLED: handle_tail_stab commented out per refactor decision.
+/*
 /obj/structure/bed/chair/comfy/vehicle/handle_tail_stab(mob/living/carbon/xenomorph/xeno, blunt_stab)
 	if(!buckled_mob)
 		return TAILSTAB_COOLDOWN_NONE
@@ -140,6 +145,7 @@
 	SPAN_DANGER("We smack [src] with our tail!"), null, 5, CHAT_TYPE_XENO_COMBAT)
 	xeno.tail_stab_animation(src, blunt_stab)
 	return TAILSTAB_COOLDOWN_LOW
+*/
 
 //custom vehicle seats for armored vehicles
 //spawners located in interior_landmarks
@@ -154,17 +160,17 @@
 
 	return ..()
 
-/obj/structure/bed/chair/comfy/vehicle/driver/armor/do_buckle(mob/target, mob/user)
+/obj/structure/bed/chair/comfy/vehicle/driver/armor/user_buckle_mob(mob/living/M, mob/user, check_loc = TRUE)
 	. = ..()
 	update_icon()
 
 /obj/structure/bed/chair/comfy/vehicle/driver/armor/update_icon()
-	overlays.Cut()
+	cut_overlays()
 
 	..()
 
 	if(buckled_mob)
-		overlays += over_image
+		add_overlay(over_image)
 
 /obj/structure/bed/chair/comfy/vehicle/gunner/armor
 	desc = "Military-grade seat for armored vehicle gunner with some controls, switches and indicators."
@@ -176,7 +182,7 @@
 
 	return ..()
 
-/obj/structure/bed/chair/comfy/vehicle/gunner/armor/do_buckle(mob/target, mob/user)
+/obj/structure/bed/chair/comfy/vehicle/gunner/armor/user_buckle_mob(mob/living/M, mob/user, check_loc = TRUE)
 	. = ..()
 	update_icon()
 
@@ -189,7 +195,7 @@
 		M.unset_interaction()
 		vehicle.set_seated_mob(seat, null)
 		if(M.client)
-			M.client.change_view(GLOB.world_view_size, vehicle)
+			M.client.change_view(world.view)
 			M.client.set_pixel_x(0)
 			M.client.set_pixel_y(0)
 	else
@@ -198,19 +204,20 @@
 			return
 		vehicle.set_seated_mob(seat, M)
 		if(M && M.client)
-			if(istype(vehicle, /obj/vehicle/multitile/apc))
-				var/obj/vehicle/multitile/apc/APC = vehicle
-				M.client.change_view(APC.gunner_view_buff, vehicle)
-			else
-				M.client.change_view(8, vehicle)
+//			if(istype(vehicle, /obj/vehicle/multitile/apc))
+//				var/obj/vehicle/multitile/apc/APC = vehicle
+//				M.client.change_view(APC.gunner_view_buff)
+//			else
+//				M.client.change_view(8)
+			M.client.change_view(8)
 
 /obj/structure/bed/chair/comfy/vehicle/gunner/armor/update_icon()
-	overlays.Cut()
+	cut_overlays()
 
 	..()
 
 	if(buckled_mob)
-		overlays += over_image
+		add_overlay(over_image)
 
 //armored vehicles support gunner seat
 
@@ -224,9 +231,14 @@
 	var/image/over_image = null
 
 /obj/structure/bed/chair/comfy/vehicle/support_gunner/Destroy()
-	var/obj/structure/prop/vehicle/firing_port_weapon/FPW = locate() in get_turf(src)
-	if(FPW)
-		FPW.SG_seat = null
+	// FPW BLOCK DISABLED: /obj/structure/prop/vehicle/firing_port_weapon is
+	// defined in apc/interior.dm which is currently commented out in
+	// _vehicle_includes.dm. Without that file in the build, the typed
+	// locate() below would fail to compile. Comment out the cleanup; it
+	// only matters for APC support-gunner seats which aren't active yet.
+	//var/obj/structure/prop/vehicle/firing_port_weapon/FPW = locate() in get_turf(src)
+	//if(FPW)
+	//	FPW.SG_seat = null
 	. = ..()
 
 /obj/structure/bed/chair/comfy/vehicle/support_gunner/Initialize(mapload)
@@ -236,7 +248,7 @@
 	return ..()
 
 
-/obj/structure/bed/chair/comfy/vehicle/support_gunner/do_buckle(mob/target, mob/user)
+/obj/structure/bed/chair/comfy/vehicle/support_gunner/user_buckle_mob(mob/living/M, mob/user, check_loc = TRUE)
 	if(ishuman(user))
 		var/mob/living/carbon/human/H = user
 		if(!H.allow_gun_usage)
@@ -244,21 +256,21 @@
 				to_chat(user, SPAN_WARNING("Your programming does not allow you to use firearms."))
 			else
 				to_chat(user, SPAN_WARNING("You are unable to use firearms."))
-			return
-		if(MODE_HAS_MODIFIER(/datum/gamemode_modifier/ceasefire))
-			to_chat(user, SPAN_WARNING("You will not break the ceasefire by doing that!"))
 			return FALSE
+//		if(MODE_HAS_MODIFIER(/datum/gamemode_modifier/ceasefire))
+//			to_chat(user, SPAN_WARNING("You will not break the ceasefire by doing that!"))
+//			return FALSE
 	. = ..()
 
 	update_icon()
 
 /obj/structure/bed/chair/comfy/vehicle/support_gunner/update_icon()
-	overlays.Cut()
+	cut_overlays()
 
 	..()
 
 	if(buckled_mob)
-		overlays += over_image
+		add_overlay(over_image)
 
 /obj/structure/bed/chair/comfy/vehicle/support_gunner/handle_afterbuckle(mob/M)
 
@@ -269,7 +281,7 @@
 		M.unset_interaction()
 		vehicle.set_seated_mob(seat, null)
 		if(M.client)
-			M.client.change_view(GLOB.world_view_size, vehicle)
+			M.client.change_view(world.view)
 			M.client.set_pixel_x(0)
 			M.client.set_pixel_y(0)
 			M.reset_view()
@@ -279,26 +291,32 @@
 			return
 		vehicle.set_seated_mob(seat, M)
 		if(M && M.client)
-			M.client.change_view(8, vehicle)
+			M.client.change_view(8)
 
 		if(vehicle.get_integrity() < vehicle.max_integrity * 0.5)
 			to_chat(M, SPAN_WARNING("\The [vehicle] is too damaged to operate the Firing Port Weapon!"))
 			return
 
-		for(var/obj/item/hardpoint/special/firing_port_weapon/FPW in vehicle.hardpoints)
-			if(FPW.allowed_seat == seat)
-				vehicle.active_hp[seat] = FPW
-				var/msg = SPAN_NOTICE("You take the control of the M56 Firing Port Weapon.")
-				if(FPW.reloading)
-					msg += SPAN_WARNING("The M56 FPW is currently reloading. Wait [SPAN_HELPFUL((FPW.reload_time_started + FPW.reload_time - world.time) / 10)] seconds.")
-				else if(FPW.ammo)
-					msg += SPAN_NOTICE("Ammo: <b>[SPAN_HELPFUL(FPW.ammo.current_rounds)]/[SPAN_HELPFUL(FPW.ammo.max_rounds)]</b>")
-				else
-					msg += SPAN_DANGER("<b>ERROR. AMMO NOT FOUND, TELL A DEV!</b>")
-				msg = SPAN_INFO("Use 'Reload Firing Port Weapon' verb in 'Vehicle' tab to activate automated reload.")
-				to_chat(M, msg)
-				return
-		to_chat(M, SPAN_WARNING("ERROR. NO FPW FOUND, TELL A DEV!"))
+		// FPW BLOCK DISABLED: /obj/item/hardpoint/special/firing_port_weapon
+		// is defined in hardpoints/special/firing_port_weapon.dm which is
+		// currently commented out in _vehicle_includes.dm. Without that
+		// file in the build, the for-loop type below would fail to compile.
+		// Comment out the FPW-activation logic; it only matters for APC
+		// support-gunner seats which aren't active yet.
+		//for(var/obj/item/hardpoint/special/firing_port_weapon/FPW in vehicle.hardpoints)
+		//	if(FPW.allowed_seat == seat)
+		//		vehicle.active_hp[seat] = FPW
+		//		var/msg = SPAN_NOTICE("You take the control of the M56 Firing Port Weapon.")
+		//		if(FPW.reloading)
+		//			msg += SPAN_WARNING("The M56 FPW is currently reloading. Wait [SPAN_HELPFUL((FPW.reload_time_started + FPW.reload_time - world.time) / 10)] seconds.")
+		//		else if(FPW.ammo)
+		//			msg += SPAN_NOTICE("Ammo: <b>[SPAN_HELPFUL(FPW.ammo.current_rounds)]/[SPAN_HELPFUL(FPW.ammo.max_rounds)]</b>")
+		//		else
+		//			msg += SPAN_DANGER("<b>ERROR. AMMO NOT FOUND, TELL A DEV!</b>")
+		//		msg = SPAN_INFO("Use 'Reload Firing Port Weapon' verb in 'Vehicle' tab to activate automated reload.")
+		//		to_chat(M, msg)
+		//		return
+		//to_chat(M, SPAN_WARNING("ERROR. NO FPW FOUND, TELL A DEV!"))
 
 /obj/structure/bed/chair/comfy/vehicle/support_gunner/second
 	name = "right support gunner's seat"
@@ -320,8 +338,8 @@
 	can_rotate = FALSE
 	picked_up_item = null
 
-//	unslashable = FALSE
-//	unacidable = TRUE
+//      unslashable = FALSE
+//      unacidable = TRUE
 
 	var/buckle_offset_x = 0
 	var/mob_old_x = 0
@@ -352,12 +370,12 @@
 		buckled_mob.setDir(dir)
 
 //------BUCKLING AND UNBUCKLING
-//trying to buckle a mob
-/obj/structure/bed/chair/vehicle/buckle_mob(mob/M, mob/user)
+//trying to buckle a mob (CM13 buckle_mob override → TG user_buckle_mob override)
+/obj/structure/bed/chair/vehicle/user_buckle_mob(mob/living/M, mob/user, check_loc = TRUE)
 
 	if(broken)
 		to_chat(user, SPAN_WARNING("\The [name] is broken and requires fixing with a welder!"))
-		return
+		return FALSE
 
 	. = ..()
 
@@ -366,7 +384,7 @@
 		if(buckled_mob != M)
 			return
 		icon_state = initial(icon_state) + "_buckled"
-		overlays += chairbar
+		add_overlay(chairbar)
 
 		if(buckle_offset_x != 0)
 			mob_old_x = M.pixel_x
@@ -376,7 +394,7 @@
 			M.pixel_y = buckle_offset_y
 	else
 		icon_state = initial(icon_state)
-		overlays -= chairbar
+		cut_overlay(chairbar)
 
 		if(buckle_offset_x != 0)
 			M.pixel_x = mob_old_x
@@ -404,6 +422,8 @@
 
 //attack handling
 
+// XENO BLOCK DISABLED: attack_alien commented out per refactor decision.
+/*
 /obj/structure/bed/chair/vehicle/attack_alien(mob/living/user)
 	if(!unslashable)
 		user.visible_message(SPAN_WARNING("[user] smashes \the [src]!"),
@@ -413,7 +433,10 @@
 			break_seat()
 		else
 			deconstruct(FALSE)
+*/
 
+// XENO BLOCK DISABLED: handle_tail_stab commented out per refactor decision.
+/*
 /obj/structure/bed/chair/vehicle/handle_tail_stab(mob/living/carbon/xenomorph/xeno, blunt_stab)
 	if(unslashable)
 		return TAILSTAB_COOLDOWN_NONE
@@ -426,6 +449,7 @@
 		deconstruct(FALSE)
 	xeno.tail_stab_animation(src, blunt_stab)
 	return TAILSTAB_COOLDOWN_NORMAL
+*/
 
 /obj/structure/bed/chair/vehicle/attackby(obj/item/W, mob/living/user)
 	if((iswelder(W) && broken))
@@ -437,7 +461,7 @@
 			playsound(src.loc, 'sound/items/weldingtool_weld.ogg', 25)
 			user.visible_message(SPAN_WARNING("[user] begins repairing \the [src]."),
 			SPAN_WARNING("You begin repairing \the [src]."))
-			if(do_after(user, 2 SECONDS, INTERRUPT_ALL|BEHAVIOR_IMMOBILE, BUSY_ICON_BUILD) && broken)
+			if(do_after(user, 2 SECONDS, target=src) && broken)
 				user.visible_message(SPAN_WARNING("[user] repairs \the [src]."),
 				SPAN_WARNING("You repair \the [src]."))
 				repair_seat()

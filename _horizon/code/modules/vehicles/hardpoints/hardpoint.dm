@@ -191,7 +191,7 @@
 	if(atom_integrity > 0)
 		return TRUE
 
-/obj/item/hardpoint/proc/take_damage(damage)
+/obj/item/hardpoint/take_damage(damage)
 	if(atom_integrity <= 0)
 		return
 	atom_integrity = max(0, atom_integrity - damage * damage_multiplier)

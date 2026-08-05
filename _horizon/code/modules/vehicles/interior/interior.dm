@@ -196,23 +196,15 @@
 	// Ensure we have an accurate count before trying to enter
 	update_passenger_count()
 
-/*
+// Minimap locator override block removed (CM13 SSminimaps not ported to TG).
+// Determine the mob entering the vehicle (if any).
 	var/mob/living/M
 	if(ismob(A))
 		M = A
-		for(var/datum/action/minimap/user_map in M.actions)
-			// TODO: minimap locator override — SSminimaps not fully ported
-			SS_UNUSED(user_map)
 	else
-		var/mobs_amount = 0
-		for(M in A)
-			mobs_amount++
-			//it's much easier to deny entering with many mobs rather than to juggle them around
-			M = A
-			if(mobs_amount > 1)
-				exterior.visible_message(SPAN_WARNING("\The [A] is too bulky to fit with so many creatures inside."))
-				return FALSE
-*/
+		for(var/mob/living/inner in A)
+			M = inner
+			break // only handle single-mob containers
 
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
@@ -291,19 +283,12 @@
 			if(!M.anchored)
 				continue
 
-		if(O.BlockedPassDirs(A, exit_dir))
+		if(!O.CanPass(A, exit_dir))
 			if(ismob(A))
 				to_chat(A, SPAN_WARNING("Something is blocking the exit!"))
 			return FALSE
 
-/*
-	var/mob/living/mob
-	if(ismob(A))
-		mob = A
-		for(var/datum/action/minimap/user_map in mob.actions)
-			// TODO: minimap locator override — SSminimaps not fully ported
-			SS_UNUSED(user_map)
-*/
+// Minimap locator override block removed (CM13 SSminimaps not ported to TG).
 	A.forceMove(get_turf(exit_turf))
 	update_passenger_count()
 	return TRUE

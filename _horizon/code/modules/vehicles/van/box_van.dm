@@ -83,8 +83,8 @@
 
 	RegisterSignal(SSdcs, COMSIG_GLOB_MOB_LOGGED_IN, PROC_REF(add_default_image))
 
-	for(var/icon in GLOB.player_list)
-		add_default_image(SSdcs, icon)
+	for(var/mob/player_mob in GLOB.player_list)
+		add_default_image(SSdcs, player_mob)
 
 /obj/vehicle/multitile/box_van/crew_mousedown(datum/source, atom/object, turf/location, control, params)
 	var/list/modifiers = params2list(params)
@@ -96,23 +96,23 @@
 			if(modifiers[LEFT_CLICK] && modifiers[CTRL_CLICK])
 				activate_horn()
 
-/obj/vehicle/multitile/box_van/BlockedPassDirs(atom/movable/mover, target_dir)
+/obj/vehicle/multitile/box_van/CanPass(atom/movable/mover, border_dir)
 	if(mover in mobs_under) //can't collide with the thing you're buckled to
-		return NO_BLOCKED_MOVEMENT
+		return TRUE
 
 	if(isliving(mover))
-		var/mob/living/mob = mover
-		if(mob.mob_flags & SQUEEZE_UNDER_VEHICLES)
-			add_under_van(mob)
-			return NO_BLOCKED_MOVEMENT
+		var/mob/living/living_mob = mover
+		if(living_mob.mob_flags & SQUEEZE_UNDER_VEHICLES)
+			add_under_van(living_mob)
+			return TRUE
 
-		if(mob.body_position == LYING_DOWN)
-			return NO_BLOCKED_MOVEMENT
+		if(living_mob.body_position == LYING_DOWN)
+			return TRUE
 
-		if(mob.mob_size >= MOB_SIZE_IMMOBILE && next_push < world.time)
-			if(try_move(target_dir, force=TRUE))
+		if(living_mob.mob_size >= MOB_SIZE_IMMOBILE && next_push < world.time)
+			if(try_move(border_dir, force=TRUE))
 				next_push = world.time + push_delay
-				return NO_BLOCKED_MOVEMENT
+				return TRUE
 
 	return ..()
 
@@ -125,58 +125,56 @@
 
 	. = ..()
 
-	for(var/icon in mobs_under)
-		var/mob/mob = icon
-		if(!(mob.loc in locs))
-			remove_under_van(mob)
+	for(var/mob/living/under_mob in mobs_under)
+		if(!(under_mob.loc in locs))
+			remove_under_van(under_mob)
 
-/obj/vehicle/multitile/box_van/proc/add_under_van(mob/living/living)
-	if(living in mobs_under)
+/obj/vehicle/multitile/box_van/proc/add_under_van(mob/living/living_mob)
+	if(living_mob in mobs_under)
 		return
 
-	mobs_under += living
-	RegisterSignal(living, COMSIG_PARENT_QDELETING, PROC_REF(remove_under_van))
-	RegisterSignal(living, COMSIG_MOB_LOGGED_IN, PROC_REF(add_client))
-	RegisterSignal(living, COMSIG_MOVABLE_MOVED, PROC_REF(check_under_van))
+	mobs_under += living_mob
+	RegisterSignal(living_mob, COMSIG_PARENT_QDELETING, PROC_REF(remove_under_van))
+	RegisterSignal(living_mob, COMSIG_MOB_LOGGED_IN, PROC_REF(add_client))
+	RegisterSignal(living_mob, COMSIG_MOVABLE_MOVED, PROC_REF(check_under_van))
 
-	if(living.client)
-		add_client(living)
+	if(living_mob.client)
+		add_client(living_mob)
 
-/obj/vehicle/multitile/box_van/proc/remove_under_van(mob/living/living)
+/obj/vehicle/multitile/box_van/proc/remove_under_van(mob/living/living_mob)
 	SIGNAL_HANDLER
-	mobs_under -= living
+	mobs_under -= living_mob
 
-	if(living.client)
-		living.client.images -= under_image
-		add_default_image(SSdcs, living)
+	if(living_mob.client)
+		living_mob.client.images -= under_image
+		add_default_image(SSdcs, living_mob)
 
-	UnregisterSignal(living, list(
+	UnregisterSignal(living_mob, list(
 		COMSIG_PARENT_QDELETING,
 		COMSIG_MOB_LOGGED_IN,
 		COMSIG_MOVABLE_MOVED,
 	))
 
-/obj/vehicle/multitile/box_van/proc/check_under_van(mob/mob, turf/oldloc, direction)
+/obj/vehicle/multitile/box_van/proc/check_under_van(mob/moved_mob, turf/oldloc, direction)
 	SIGNAL_HANDLER
-	if(!(mob.loc in locs))
-		remove_under_van(mob)
+	if(!(moved_mob.loc in locs))
+		remove_under_van(moved_mob)
 
-/obj/vehicle/multitile/box_van/proc/add_client(mob/living/living)
+/obj/vehicle/multitile/box_van/proc/add_client(mob/living/living_mob)
 	SIGNAL_HANDLER
-	living.client.images += under_image
-	living.client.images -= normal_image
+	living_mob.client.images += under_image
+	living_mob.client.images -= normal_image
 
-/obj/vehicle/multitile/box_van/proc/add_default_image(subsystem, mob/mob)
+/obj/vehicle/multitile/box_van/proc/add_default_image(subsystem, mob/player_mob)
 	SIGNAL_HANDLER
-	mob.client.images += normal_image
+	player_mob.client.images += normal_image
 
 /obj/vehicle/multitile/box_van/Destroy()
-	for(var/icon in mobs_under)
-		remove_under_van(icon)
+	for(var/mob/living/under_mob in mobs_under)
+		remove_under_van(under_mob)
 
-	for(var/icon in GLOB.player_list)
-		var/mob/mob = icon
-		mob.client.images -= normal_image
+	for(var/mob/player_mob in GLOB.player_list)
+		player_mob.client.images -= normal_image
 
 	QDEL_NULL(lighting_holder)
 
@@ -186,18 +184,18 @@
 	if(user.z != z)
 		return ..()
 
-	if(iswelder(O) && health >= initial(health))
+	if(iswelder(O) && get_integrity() >= max_integrity)
 		if(!HAS_TRAIT(O, TRAIT_TOOL_BLOWTORCH))
 			to_chat(user, SPAN_WARNING("You need a stronger blowtorch!"))
 			return
-		var/obj/item/hardpoint/health
+		var/obj/item/hardpoint/health_hp
 		for(var/obj/item/hardpoint/potential_hardpoint in hardpoints)
-			if(potential_hardpoint.get_integrity() < initial(potential_hardpoint.get_integrity()))
-				health = potential_hardpoint
+			if(potential_hardpoint.get_integrity() < potential_hardpoint.max_integrity)
+				health_hp = potential_hardpoint
 				break
 
-		if(health)
-			health.handle_repair(O, user)
+		if(health_hp)
+			health_hp.handle_repair(O, user)
 			update_icon()
 			return
 
@@ -234,6 +232,10 @@
 	if(!seats[VEHICLE_DRIVER])
 		return FALSE
 
+/*
+	// CM13 barricade/cryopod ramming rules — TG has different barricade
+	// structure and no cryopods; commented out until proper ramming logic
+	// is implemented for TG structures.
 	if(istype(A, /obj/structure/barricade/plasteel))
 		return ..()
 
@@ -244,6 +246,7 @@
 	   istype(A, /obj/structure/machinery/cryopod)) //Can no longer runover cryopods
 
 		return FALSE
+*/
 
 	return ..()
 

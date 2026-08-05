@@ -1,6 +1,8 @@
 /obj/vehicle/multitile/Collide(atom/A)
 	if(A && !QDELETED(A))
-		A.last_bumped = world.time
+		if(istype(A, /mob/living))
+			var/mob/living/L = A
+			L.last_bumped = world.time
 		A.Collided(src)
 	return A.handle_vehicle_bump(src)
 

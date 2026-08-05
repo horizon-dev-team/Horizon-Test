@@ -54,19 +54,22 @@
 	if(atom_integrity <= 0)
 		return
 	var/take_damage = 0
-	if(istype(A, /obj/effect/xenomorph/spray))
-		var/obj/effect/xenomorph/spray/acid = A
+	// CM13-only acid spray handling - commented out for TG port.
+	// /obj/effect/xenomorph/spray is a stub type without damage_amount/cause_data vars.
+	// if(istype(A, /obj/effect/xenomorph/spray))
+	// 	var/obj/effect/xenomorph/spray/acid = A
+	//
+	// 	take_damage = acid.damage_amount
+	// 	//First we check source of acid. Due to traps generating 3x3 acid spray field and triggering only when at least 4 tiles
+	// 	//of vehicle enter the spray spawn area, it deals a huge amount of damage. But simply nerfing damage will also nerf it for
+	// 	//acid spraying castes like spitters and praetorians, which is not ideal.
+	// 	if(acid.cause_data.cause_name == "resin acid trap")
+	// 		take_damage = round(take_damage / 3)
 
-		take_damage = acid.damage_amount
-		//First we check source of acid. Due to traps generating 3x3 acid spray field and triggering only when at least 4 tiles
-		//of vehicle enter the spray spawn area, it deals a huge amount of damage. But simply nerfing damage will also nerf it for
-		//acid spraying castes like spitters and praetorians, which is not ideal.
-		if(acid.cause_data.cause_name == "resin acid trap")
-			take_damage = round(take_damage / 3)
-
-	else if(istype(A, /obj/effect/blocker/water/toxic))
-		//multitile vehicles are, well, multitile and will be receiving damage for each tile, so damage is low per tile.
-		take_damage = 10
+	// CM13-only toxic water handling - commented out for TG port.
+	// else if(istype(A, /obj/effect/blocker/water/toxic))
+	// 	//multitile vehicles are, well, multitile and will be receiving damage for each tile, so damage is low per tile.
+	// 	take_damage = 10
 
 	//then we check whether this locomotion module is acid-resistant
 	if(acid_resistant)

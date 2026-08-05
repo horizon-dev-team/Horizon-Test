@@ -1,11 +1,5 @@
 #define INTERIOR_BORDER_SIZE 2
 
-/// Turf reservation type for vehicle interiors.
-/// Uses plating as the base turf so interiors are self-contained.
-/datum/turf_reservation/interior
-	/// The interior datum that owns this reservation
-	var/datum/interior/owner_interior
-
 SUBSYSTEM_DEF(interior)
 	name = "Interiors"
 	ss_flags = SS_NO_FIRE|SS_NO_INIT
