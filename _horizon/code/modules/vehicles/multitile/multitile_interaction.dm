@@ -58,6 +58,7 @@
 		detach_clamp(user)
 		return
 
+/*
 	//try to fit something in vehicle without getting in ourselves
 	if(istype(O, /obj/item/grab) && ishuman(user)) //only humans are allowed to fit dragged stuff inside
 		if(user.a_intent == INTENT_HELP)
@@ -74,6 +75,7 @@
 			to_chat(user, span_info("Use [span_nicegreen("HELP")] intent to put a pulled object or creature into the vehicle without getting inside yourself."))
 			handle_player_entrance(user)
 			return
+*/
 
 	// XENO REMOVED: grenade throwing logic (CM13-specific grenade type)
 	// if(istype(O, /obj/item/explosive/grenade))
@@ -314,6 +316,7 @@
 
 	var/enter_msg = "You start climbing into \the [src]..."
 
+/*
 	// Check if drag anything
 	var/atom/dragged_atom
 	if(istype(M.get_inactive_hand(), /obj/item/grab))
@@ -322,6 +325,7 @@
 	else if(istype(M.get_active_hand(), /obj/item/grab))
 		var/obj/item/grab/G = M.get_active_hand()
 		dragged_atom = G.affecting
+*/
 
 	if(!enter_time)
 		enter_time = entrance_speed
@@ -340,6 +344,7 @@
 			to_chat(M, span_warning("\The [src] moved!"))
 			return
 
+/*
 	//Dragged stuff comes with us only if properly waited 2 seconds. No cheating!
 	if(dragged_atom)
 		dragged_atom = null
@@ -350,6 +355,7 @@
 			var/obj/item/grab/G = M.get_active_hand()
 			dragged_atom = G.affecting
 
+
 	// Transfer them to the interior
 	interior.enter(M, entrance_used)
 
@@ -358,6 +364,7 @@
 		var/success = interior.enter(dragged_atom, entrance_used)
 		if(!success)
 			to_chat(M, span_warning("You fail to fit [dragged_atom] inside \the [src] and leave [ismob(dragged_atom) ? "them" : "it"] outside."))
+*/
 
 //try to fit something into the vehicle
 /obj/vehicle/multitile/proc/handle_fitting_pulled_atom(mob/living/carbon/human/user, atom/dragged_atom)
@@ -382,6 +389,7 @@
 	if(mob_x != user.x - x || mob_y != user.y - y)
 		return
 
+/*
 	var/atom/currently_dragged
 
 	if(istype(user.get_inactive_hand(), /obj/item/grab))
@@ -390,6 +398,7 @@
 	else if(istype(user.get_active_hand(), /obj/item/grab))
 		var/obj/item/grab/G = user.get_active_hand()
 		currently_dragged = G.affecting
+*/
 
 	if(currently_dragged != dragged_atom)
 		to_chat(user, span_warning("You stop fitting [dragged_atom] inside \the [src]!"))

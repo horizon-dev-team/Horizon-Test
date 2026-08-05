@@ -10,4 +10,5 @@
 	gun_type = /obj/item/hardpoint/holder/tank_turret
 
 /obj/item/ammo_magazine/hardpoint/turret_smoke/update_icon()
+	. = ..()
 	icon_state = "slauncher_[current_rounds <= 0 ? "0" : "1"]"

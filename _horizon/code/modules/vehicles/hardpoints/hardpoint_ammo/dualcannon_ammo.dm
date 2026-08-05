@@ -10,6 +10,7 @@
 	gun_type = /obj/item/hardpoint/primary/dualcannon
 
 /obj/item/ammo_magazine/hardpoint/boyars_dualcannon/update_icon()
+	. = ..()
 	if(current_rounds > 0)
 		icon_state = "ace_autocannon"
 	else

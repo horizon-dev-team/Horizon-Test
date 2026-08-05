@@ -10,4 +10,5 @@
 	gun_type = /obj/item/hardpoint/support/flare_launcher
 
 /obj/item/ammo_magazine/hardpoint/flare_launcher/update_icon()
+	. = ..()
 	icon_state = "slauncher_[current_rounds <= 0 ? "0" : "1"]"

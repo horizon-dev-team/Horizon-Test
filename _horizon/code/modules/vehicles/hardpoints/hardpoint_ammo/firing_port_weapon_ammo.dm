@@ -10,4 +10,5 @@
 	gun_type = /obj/item/hardpoint/special/firing_port_weapon
 
 /obj/item/ammo_magazine/hardpoint/firing_port_weapon/update_icon()
+	. = ..()
 	icon_state = "cupola_[current_rounds <= 0 ? "0" : "1"]"

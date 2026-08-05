@@ -196,6 +196,7 @@
 	// Ensure we have an accurate count before trying to enter
 	update_passenger_count()
 
+/*
 	var/mob/living/M
 	if(ismob(A))
 		M = A
@@ -211,6 +212,7 @@
 			if(mobs_amount > 1)
 				exterior.visible_message(SPAN_WARNING("\The [A] is too bulky to fit with so many creatures inside."))
 				return FALSE
+*/
 
 	if(ishuman(M))
 		var/mob/living/carbon/human/H = M
@@ -294,12 +296,14 @@
 				to_chat(A, SPAN_WARNING("Something is blocking the exit!"))
 			return FALSE
 
+/*
 	var/mob/living/mob
 	if(ismob(A))
 		mob = A
 		for(var/datum/action/minimap/user_map in mob.actions)
 			// TODO: minimap locator override — SSminimaps not fully ported
 			SS_UNUSED(user_map)
+*/
 	A.forceMove(get_turf(exit_turf))
 	update_passenger_count()
 	return TRUE

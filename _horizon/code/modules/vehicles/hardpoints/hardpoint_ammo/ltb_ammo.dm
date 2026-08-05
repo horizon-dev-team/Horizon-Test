@@ -10,4 +10,5 @@
 	gun_type = /obj/item/hardpoint/primary/cannon
 
 /obj/item/ammo_magazine/hardpoint/ltb_cannon/update_icon()
+	. = ..()
 	icon_state = "ltbcannon_[current_rounds]"

@@ -74,7 +74,7 @@
 	S.setDir(dir)
 	S.alpha = alpha
 	S.update_icon()
-	S.handle_rotation()
+//	S.handle_rotation()
 	S.pixel_x = pixel_x
 	S.pixel_y = pixel_y
 
@@ -97,7 +97,7 @@
 	S.setDir(dir)
 	S.alpha = alpha
 	S.update_icon()
-	S.handle_rotation()
+//	S.handle_rotation()
 	S.pixel_x = pixel_x
 	S.pixel_y = pixel_y
 
@@ -119,7 +119,7 @@
 	S.setDir(dir)
 	S.update_icon()
 	S.alpha = alpha
-	S.handle_rotation()
+//	S.handle_rotation()
 	S.pixel_x = pixel_x
 	S.pixel_y = pixel_y
 
@@ -144,7 +144,7 @@
 	S.setDir(dir)
 	S.alpha = alpha
 	S.update_icon()
-	S.handle_rotation()
+//	S.handle_rotation()
 	S.pixel_x = pixel_x
 	S.pixel_y = pixel_y
 
@@ -168,7 +168,7 @@
 	S.setDir(dir)
 	S.alpha = alpha
 	S.update_icon()
-	S.handle_rotation()
+//	S.handle_rotation()
 	S.pixel_x = pixel_x
 	S.pixel_y = pixel_y
 
@@ -190,7 +190,7 @@
 	S.setDir(dir)
 	S.alpha = alpha
 	S.update_icon()
-	S.handle_rotation()
+//	S.handle_rotation()
 	S.pixel_x = pixel_x
 	S.pixel_y = pixel_y
 
@@ -276,7 +276,7 @@
 	name = "armored vehicle viewport spawner"
 	icon = 'icons/obj/vehicles/interiors/general.dmi'
 	icon_state = "viewport"
-	layer = INTERIOR_DOOR_LAYER
+//	layer = INTERIOR_DOOR_LAYER
 	color = "#009cb8"
 
 /obj/effect/landmark/interior/spawn/interior_viewport/on_load(datum/interior/I)
@@ -300,7 +300,7 @@
 	name = "simple vehicle viewport spawner"
 	icon = 'icons/obj/vehicles/interiors/general.dmi'
 	icon_state = "viewport_simple"
-	layer = INTERIOR_DOOR_LAYER
+//	layer = INTERIOR_DOOR_LAYER
 	color = "#009cb8"
 
 /obj/effect/landmark/interior/spawn/interior_viewport/simple/on_load(datum/interior/I)
@@ -319,7 +319,7 @@
 	name = "windshield viewport spawner"
 	icon = 'icons/obj/vehicles/interiors/van.dmi'
 	icon_state = "windshield_viewport_top"
-	layer = INTERIOR_DOOR_LAYER
+//	layer = INTERIOR_DOOR_LAYER
 	color = "#009cb8"
 	alpha = 80
 

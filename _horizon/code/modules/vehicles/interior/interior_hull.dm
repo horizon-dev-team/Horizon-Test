@@ -12,14 +12,14 @@
 	opacity = TRUE
 	anchored = TRUE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
-	layer = WALL_LAYER
-	flags_atom = NOINTERACT
+//	layer = WALL_LAYER
+//	flags_atom = NOINTERACT
 //	unacidable = TRUE
 //	unslashable = TRUE
 //	explo_proof = TRUE
 
-/obj/structure/interior_wall/get_projectile_hit_boolean(obj/projectile/P)
-	return FALSE
+///obj/structure/interior_wall/get_projectile_hit_boolean(obj/projectile/P)
+//	return FALSE
 
 /obj/structure/interior_wall/ex_act()
 	return
@@ -34,15 +34,15 @@
 	opacity = FALSE
 	anchored = TRUE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
-	layer = ABOVE_FLY_LAYER
-	flags_atom = NOINTERACT
+//	layer = ABOVE_FLY_LAYER
+//	flags_atom = NOINTERACT
 //	unacidable = TRUE
 //	explo_proof = TRUE
 
 	alpha = 80
 
-/obj/effect/vehicle_roof/get_projectile_hit_boolean(obj/projectile/P)
-	return FALSE
+///obj/effect/vehicle_roof/get_projectile_hit_boolean(obj/projectile/P)
+//	return FALSE
 
 /obj/effect/vehicle_roof/ex_act()
 	return

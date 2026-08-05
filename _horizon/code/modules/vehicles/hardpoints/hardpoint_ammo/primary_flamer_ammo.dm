@@ -10,6 +10,7 @@
 	default_ammo = /datum/ammo/flamethrower/tank_flamer
 
 /obj/item/ammo_magazine/hardpoint/primary_flamer/update_icon()
+	. = ..()
 	if(current_rounds > 0)
 		icon_state = "drgn_flametank"
 	else

@@ -115,40 +115,6 @@
 /mob/proc/get_skill_duration_multiplier(skill)
 	return 1
 
-// ============================================================================
-// ITEM MANIPULATION — CM13 API → TG equivalents
-// ============================================================================
-
-/// CM13: drop item to loc. TG: transferItemToLoc.
-/mob/proc/temp_drop_inv_item(obj/item/I, force)
-	if(!I)
-		return FALSE
-	return transferItemToLoc(I, get_turf(src), force = force)
-
-/// CM13: drop item to specific loc. TG: transferItemToLoc.
-/mob/proc/drop_inv_item_to_loc(obj/item/I, atom/dest)
-	if(!I)
-		return FALSE
-	return transferItemToLoc(I, dest)
-
-/// CM13: drop held item. TG: dropItemToGround.
-/mob/proc/drop_held_item()
-	var/obj/item/I = get_active_held_item()
-	if(I)
-		dropItemToGround(I)
-
-// Note: get_active_hand() and get_inactive_hand() already exist in TG
-// at code/modules/surgery/bodyparts/helpers.dm — no need to redefine.
-
-// ============================================================================
-// GRAMMAR HELPERS — CM13 pluralization
-// Note: p_are() and p_s() already exist in TG at code/__HELPERS/pronouns.dm
-// ============================================================================
-
-// ============================================================================
-// CAUSE DATA — CM13 cause tracking (simplified for TG)
-// ============================================================================
-
 /datum/cause_data
 	var/cause_name = ""
 	var/mob/living/victim = null
@@ -211,10 +177,6 @@
 		return null
 	return pick(turfs)
 
-/// CM13 explosive_antigrief_check — no antigrief in TG.
-/proc/explosive_antigrief_check(obj/item/explosive/grenade/nade, mob/user)
-	return FALSE
-
 // ============================================================================
 // ADMIN HELPERS — map CM13 to TG
 // ============================================================================
@@ -227,18 +189,6 @@
 /proc/msg_admin_ff(text, alert_admins, z)
 	log_admin(text)
 
-/// CM13 log_attack — already exists in TG at code/__HELPERS/logging/attack.dm
-// Removed duplicate definition.
-
-/// CM13 ADMIN_JMP — maps to TG admin teleport.
-#define ADMIN_JMP(atom) "([ADMIN_JMPSRC(atom)])"
-
-/// CM13 ADMIN_PM — maps to TG admin PM.
-#define ADMIN_PM(mob) ""
-/*
-/// CM13 WRAP_STAFF_LOG — simplified for TG.
-#define WRAP_STAFF_LOG(user, text) "[key_name(user)] [text]"
-*/
 // ============================================================================
 // IFF / FACTION — CM13 target lock system
 // ============================================================================
@@ -393,28 +343,6 @@ GLOBAL_LIST_INIT(all_multi_vehicles, list())
 #define INTERRUPT_NO_NEEDHAND IGNORE_HELD_ITEM
 #define INTERRUPT_DIFF_LOC IGNORE_TARGET_LOC_CHANGE
 
-// ============================================================================
-// GRAB — CM13 grab item type (TG uses mob.pulling instead)
-// This minimal type allows CM13 vehicle code to compile.
-// ============================================================================
-
-/obj/item/grab
-	name = "grab"
-	icon = 'icons/obj/items/weapons/projectiles.dmi'
-	icon_state = "grab"
-	item_flags = ABSTRACT | DROPDEL | HAND_ITEM
-	/// The atom being grabbed (CM13: grabbed_thing, TG: mob.pulling)
-	var/atom/grabbed_thing
-	/// CM13 alias for grabbed_thing
-	var/atom/affecting
-
-/obj/item/grab/Initialize(mapload, ...)
-	. = ..()
-	if(!grabbed_thing && ismob(loc))
-		grabbed_thing = loc.pulling
-		affecting = grabbed_thing
-
-// ============================================================================
 // ISPOWERCLAMP — CM13 powerloader clamp check
 // ============================================================================
 
@@ -450,6 +378,7 @@ GLOBAL_LIST_INIT(all_multi_vehicles, list())
 	return
 
 /obj/item/powerloader_clamp/update_icon()
+	. = ..()
 	return
 
 // ============================================================================
@@ -526,14 +455,6 @@ GLOBAL_LIST_INIT(all_multi_vehicles, list())
 	. = ..()
 
 // ============================================================================
-// EXPLO_PROOF — CM13 explosion immunity flag
-// ============================================================================
-
-/// CM13 explo_proof — if TRUE, immune to explosions.
-/// TG uses resistance_flags & INDESTRUCTIBLE.
-/obj/item/var/explo_proof = FALSE
-
-// ============================================================================
 // MISSING HELPERS — CM13 procs not in TG
 // ============================================================================
 
@@ -575,15 +496,6 @@ GLOBAL_LIST_INIT(all_multi_vehicles, list())
 	var/datum/browser/popup = new(user, window_id, title, width, height)
 	popup.set_content(content)
 	popup.open()
-
-// ============================================================================
-// TURF RESERVATION — CM13 interior system
-// ============================================================================
-
-/// CM13: /datum/turf_reservation/interior — used by vehicle interiors.
-/// TG has /datum/turf_reservation but not the interior subtype.
-/datum/turf_reservation/interior
-	name = "interior reservation"
 
 // ============================================================================
 // MISC HELPERS

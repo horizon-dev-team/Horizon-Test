@@ -10,6 +10,7 @@
 	gun_type = /obj/item/hardpoint/secondary/grenade_launcher
 
 /obj/item/ammo_magazine/hardpoint/tank_glauncher/update_icon()
+	. = ..()
 	if(current_rounds >= max_rounds)
 		icon_state = "glauncher_2"
 	else if(current_rounds <= 0)

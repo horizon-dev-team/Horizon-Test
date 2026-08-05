@@ -130,8 +130,8 @@
 		PC.loaded = null
 		playsound(loc, 'sound/machines/hydraulics_2.ogg', 40, 1)
 		PC.update_icon()
-	else
-		user.temp_drop_inv_item(HP, 0)
+//	else
+//		user.temp_drop_inv_item(HP, 0)
 
 	add_hardpoint(HP, user)
 

@@ -10,6 +10,7 @@
 	gun_type = /obj/item/hardpoint/secondary/m56cupola
 
 /obj/item/ammo_magazine/hardpoint/m56_cupola/update_icon()
+	. = ..()
 	icon_state = "cupola_[current_rounds <= 0 ? "0" : "1"]"
 
 /obj/item/ammo_magazine/hardpoint/m56_cupola/frontal_cannon
