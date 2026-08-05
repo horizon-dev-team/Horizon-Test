@@ -6,7 +6,7 @@
 	disp_icon = "tank"
 	disp_icon_state = "snowplow"
 
-	health = 150
+	max_integrity = 150
 	activatable = 1
 
 /obj/item/hardpoint/armor/snowplow/livingmob_interact(mob/living/M)
@@ -17,7 +17,7 @@
 	M.apply_damage(7 + rand(0, 3), BRUTE)
 
 /obj/item/hardpoint/armor/snowplow/on_move(turf/old, turf/new_turf, move_dir)
-	if(health <= 0)
+	if(atom_integrity <= 0)
 		return
 
 	if(dir != move_dir)

@@ -5,9 +5,9 @@
 	icon_state = "vomit_1"
 	layer = INTERIOR_DOOR_LAYER
 
-	unacidable = TRUE
-	unslashable = TRUE
-	explo_proof = TRUE
+//	unacidable = TRUE
+//	unslashable = TRUE
+//	explo_proof = TRUE
 
 	// The interior interior this exit is tied to
 	var/datum/interior/interior = null
@@ -49,7 +49,7 @@
 			interior.exit(G.grabbed_thing)
 
 	interior.exit(M)
-
+/*
 /obj/structure/interior_exit/attack_alien(mob/living/carbon/xenomorph/M, dam_bonus)
 	to_chat(M, SPAN_NOTICE("You start climbing out of \the [interior.exterior]."))
 	if(!do_after(M, 1 SECONDS, INTERRUPT_NO_NEEDHAND, BUSY_ICON_GENERIC))
@@ -57,6 +57,7 @@
 	else
 		interior.exit(M)
 	return XENO_NO_DELAY_ACTION
+*/
 
 /obj/structure/interior_exit/vehicle/attackby(obj/item/object, mob/user)
 	if(istype(object, /obj/item/explosive/grenade))
@@ -103,6 +104,7 @@
 	update_icon()
 
 /obj/structure/interior_exit/vehicle/update_icon()
+	. = ..()
 	switch(dir)
 		if(NORTH)
 			pixel_y = 31

@@ -6,7 +6,7 @@
 	disp_icon = "tank"
 	disp_icon_state = "towlauncher"
 
-	health = 500
+	max_integrity = 500
 	firing_arc = 60
 
 	ammo = new /obj/item/ammo_magazine/hardpoint/towlauncher

@@ -8,7 +8,7 @@
 
 	slot = HDPT_TREADS
 
-	health = 300
+	max_integrity = 300
 
 	//with this settings, takes 3 tiles to reach top speed
 	move_delay = 3.8
@@ -20,14 +20,14 @@
 	name = "\improper Reinforced Treads"
 	desc = "These treads are made of solid steel plates and are more durable. However, the extra weight slows the tank down."
 
-	health = 500
+	max_integrity = 500
 	acid_resistant = TRUE
 
 	move_max_momentum = 5 //same top speed, but takes 5 tiles to reach it
 
 /obj/item/hardpoint/locomotion/treads/on_install(obj/vehicle/multitile/V)
 	for(var/obj/item/hardpoint/support/overdrive_enhancer/OD in V.hardpoints)
-		if(OD.health > 0)
+		if(OD.get_integrity() > 0)
 			OD.apply_buff(V)
 	if(move_delay)
 		V.move_delay = move_delay
@@ -40,7 +40,7 @@
 
 /obj/item/hardpoint/locomotion/treads/deactivate()
 	for(var/obj/item/hardpoint/support/overdrive_enhancer/OD in owner.hardpoints)
-		if(OD.health > 0)
+		if(OD.get_integrity() > 0)
 			OD.remove_buff(owner)
 	owner.move_delay = initial(owner.move_delay)
 	owner.move_max_momentum = initial(owner.move_max_momentum)

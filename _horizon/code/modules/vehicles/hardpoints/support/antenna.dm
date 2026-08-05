@@ -9,7 +9,7 @@
 
 	damage_multiplier = 0.1
 
-	health = 500
+	max_integrity = 500
 
 	/// How long the antenna deploy/retract animation is, keep accurate to the sprite in the dmi
 	var/deploy_animation_time = 1.2 SECONDS
@@ -51,14 +51,14 @@
 	disp_icon_state = initial(disp_icon_state)
 
 /obj/item/hardpoint/support/arc_antenna/get_icon_image(x_offset, y_offset, new_dir)
-	var/is_broken = health <= 0
+	var/is_broken = atom_integrity <= 0
 	var/antenna_extended = FALSE
 	if(istype(owner, /obj/vehicle/multitile/arc))
 		var/obj/vehicle/multitile/arc/arc_owner = owner
 		antenna_extended = arc_owner.antenna_deployed
 
 	var/image/antenna_img = image(icon = disp_icon, icon_state = "[disp_icon_state]_[antenna_extended ? "extended" : "cover"]_[is_broken ? "1" : "0"]", pixel_x = x_offset, pixel_y = y_offset, dir = new_dir)
-	switch(floor((health / initial(health)) * 100))
+	switch(round((atom_integrity / max_integrity) * 100))
 		if(0)
 			antenna_img.color = "#888888"
 		if(1 to 20)

@@ -65,7 +65,7 @@
 //Similar to repairing stuff, down to the time delay
 /obj/vehicle/multitile/proc/install_hardpoint(obj/item/O, mob/user)
 	if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_TRAINED))
-		to_chat(user, SPAN_WARNING("You don't know what to do with [O] on \the [src]."))
+		to_chat(user, span_warning("You don't know what to do with [O] on \the [src]."))
 		return
 
 	var/obj/item/hardpoint/HP = O
@@ -80,22 +80,22 @@
 			update_icon()
 			return
 
-	if(health < initial(health) * 0.75)
-		to_chat(user, SPAN_WARNING("All the mounting points on \the [src] are broken!"))
+	if(get_integrity() < max_integrity * 0.75)
+		to_chat(user, span_warning("All the mounting points on \the [src] are broken!"))
 		return
 
 	if(LAZYLEN(hardpoints))
 		for(var/obj/item/hardpoint/H in hardpoints)
 			if(HP.slot == H.slot)
-				to_chat(user, SPAN_WARNING("There is already something installed there!"))
+				to_chat(user, span_warning("There is already something installed there!"))
 				return
 
 	if(!(HP.type in hardpoints_allowed))
-		to_chat(user, SPAN_WARNING("You don't know what to do with [HP] on \the [src]."))
+		to_chat(user, span_warning("You don't know what to do with [HP] on \the [src]."))
 		return
 
-	user.visible_message(SPAN_NOTICE("[user] begins installing \the [HP] on the [HP.slot] hardpoint slot of \the [src]."),
-		SPAN_NOTICE("You begin installing \the [HP] on the [HP.slot] hardpoint slot of \the [src]."))
+	user.visible_message(span_notice("[user] begins installing \the [HP] on the [HP.slot] hardpoint slot of \the [src]."),
+		span_notice("You begin installing \the [HP] on the [HP.slot] hardpoint slot of \the [src]."))
 
 	var/num_delays = 1
 
@@ -111,22 +111,22 @@
 		if(HDPT_TREADS, HDPT_WHEELS)
 			num_delays = 7
 
-	if(!do_after(user, 30*num_delays * user.get_skill_duration_multiplier(SKILL_ENGINEER), INTERRUPT_ALL, BUSY_ICON_FRIENDLY, numticks = num_delays))
-		user.visible_message(SPAN_WARNING("[user] stops installing \the [HP] on \the [src]."), SPAN_WARNING("You stop installing \the [HP] on \the [src]."))
+	if(!cm_do_after(user, 30*num_delays * user.get_skill_duration_multiplier(SKILL_ENGINEER), src, INTERRUPT_ALL))
+		user.visible_message(span_warning("[user] stops installing \the [HP] on \the [src]."), span_warning("You stop installing \the [HP] on \the [src]."))
 		return
 
 	//check to prevent putting two modules on same slot
 	for(var/obj/item/hardpoint/H in hardpoints)
 		if(HP.slot == H.slot)
-			to_chat(user, SPAN_WARNING("There is already something installed there!"))
+			to_chat(user, span_warning("There is already something installed there!"))
 			return
 
-	user.visible_message(SPAN_NOTICE("[user] installs \the [HP] on \the [src]."), SPAN_NOTICE("You install \the [HP] on \the [src]."))
+	user.visible_message(span_notice("[user] installs \the [HP] on \the [src]."), span_notice("You install \the [HP] on \the [src]."))
 
 	if(ispowerclamp(O))
 		var/obj/item/powerloader_clamp/PC = O
 		PC.loaded.forceMove(src)
-		to_chat(user, SPAN_NOTICE("You install \the [PC.loaded] on \the [src] with \the [PC]."))
+		to_chat(user, span_notice("You install \the [PC.loaded] on \the [src] with \the [PC]."))
 		PC.loaded = null
 		playsound(loc, 'sound/machines/hydraulics_2.ogg', 40, 1)
 		PC.update_icon()
@@ -139,7 +139,7 @@
 //Again, similar to the above ones
 /obj/vehicle/multitile/proc/uninstall_hardpoint(obj/item/O, mob/user)
 	if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_TRAINED))
-		to_chat(user, SPAN_WARNING("You don't know what to do with \the [O] on \the [src]."))
+		to_chat(user, span_warning("You don't know what to do with \the [O] on \the [src]."))
 		return
 
 	if(ispowerclamp(O))
@@ -161,7 +161,7 @@
 	var/obj/item/hardpoint/old = chosen_hp
 
 	if(!old)
-		to_chat(user, SPAN_WARNING("There is nothing installed there."))
+		to_chat(user, span_warning("There is nothing installed there."))
 		return
 
 	if(!old.can_be_removed(user))
@@ -174,8 +174,8 @@
 				update_icon()
 				return
 
-	user.visible_message(SPAN_NOTICE("[user] begins removing [old] on the [old.slot] hardpoint slot on \the [src]."),
-		SPAN_NOTICE("You begin removing [old] on the [old.slot] hardpoint slot on \the [src]."))
+	user.visible_message(span_notice("[user] begins removing [old] on the [old.slot] hardpoint slot on \the [src]."),
+		span_notice("You begin removing [old] on the [old.slot] hardpoint slot on \the [src]."))
 
 	var/num_delays = 1
 
@@ -191,11 +191,11 @@
 		if(HDPT_TREADS)
 			num_delays = 7
 
-	if(!do_after(user, 30*num_delays * user.get_skill_duration_multiplier(SKILL_ENGINEER), INTERRUPT_ALL, BUSY_ICON_FRIENDLY, numticks = num_delays, target_flags = INTERRUPT_DIFF_LOC, target = old))
-		user.visible_message(SPAN_WARNING("[user] stops removing \the [old] on \the [src]."), SPAN_WARNING("You stop removing \the [old] on \the [src]."))
+	if(!cm_do_after(user, 30*num_delays * user.get_skill_duration_multiplier(SKILL_ENGINEER), old, INTERRUPT_ALL))
+		user.visible_message(span_warning("[user] stops removing \the [old] on \the [src]."), span_warning("You stop removing \the [old] on \the [src]."))
 		return
 
-	user.visible_message(SPAN_NOTICE("[user] removes \the [old] on \the [src]."), SPAN_NOTICE("You remove \the [old] on \the [src]."))
+	user.visible_message(span_notice("[user] removes \the [old] on \the [src]."), span_notice("You remove \the [old] on \the [src]."))
 
 	remove_hardpoint(old, user)
 
@@ -239,8 +239,8 @@
 	hardpoints -= old
 	old.owner = null
 
-	if(old.health <= 0 && !old.gc_destroyed) // Make sure it's not already being deleted.
-		visible_message(SPAN_WARNING("\The [src] disintegrates into useless pile of scrap under the damage it suffered."))
+	if(old.atom_integrity <= 0 && !old.gc_destroyed) // Make sure it's not already being deleted.
+		visible_message(span_warning("\The [src] disintegrates into useless pile of scrap under the damage it suffered."))
 		qdel(old)
 
 	update_icon()

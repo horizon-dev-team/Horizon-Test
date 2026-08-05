@@ -9,7 +9,7 @@
 	disp_icon = "arc"
 	disp_icon_state = "arc_wheels"
 
-	health = 500
+	max_integrity = 500
 
 	move_delay = VEHICLE_SPEED_SUPERFAST
 	move_max_momentum = 2

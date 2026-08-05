@@ -18,7 +18,6 @@ GLOBAL_LIST_EMPTY(command_apc_list)
 	interior_map = /datum/map_template/interior/apc
 
 	passengers_slots = 15
-	xenos_slots = 8
 
 	entrances = list(
 		"left" = list(2, 0),
@@ -59,7 +58,7 @@ GLOBAL_LIST_EMPTY(command_apc_list)
 
 	vehicle_flags = VEHICLE_CLASS_LIGHT
 
-	mob_size_required_to_hit = MOB_SIZE_XENO
+//	mob_size_required_to_hit = MOB_SIZE_XENO
 
 	dmg_multipliers = list(
 		"all" = 1,
@@ -77,19 +76,6 @@ GLOBAL_LIST_EMPTY(command_apc_list)
 
 	vehicle_ram_multiplier = VEHICLE_TRAMPLE_DAMAGE_APC_REDUCTION
 	minimap_icon_state = "apc"
-
-/obj/vehicle/multitile/apc/load_role_reserved_slots()
-	var/datum/role_reserved_slots/RRS = new
-	RRS.category_name = "Crewmen"
-	RRS.roles = list(JOB_TANK_CREW, JOB_UPP_CREWMAN, JOB_PMC_CREWMAN, JOB_ARMY_TANK)
-	RRS.total = 2
-	role_reserved_slots += RRS
-
-	RRS = new
-	RRS.category_name = "Synthetic Unit"
-	RRS.roles = list(JOB_SYNTH, JOB_WO_SYNTH)
-	RRS.total = 1
-	role_reserved_slots += RRS
 
 /obj/vehicle/multitile/apc/add_seated_verbs(mob/living/M, seat)
 	if(!M.client)
@@ -141,6 +127,7 @@ GLOBAL_LIST_EMPTY(command_apc_list)
 			/obj/vehicle/multitile/proc/reload_firing_port_weapon
 		))
 
+/*
 /obj/vehicle/multitile/apc/initialize_cameras(change_tag = FALSE)
 	if(!camera)
 		camera = new /obj/structure/machinery/camera/vehicle(src)
@@ -152,6 +139,7 @@ GLOBAL_LIST_EMPTY(command_apc_list)
 		camera.c_tag = "#[rand(1,100)] M777 APC"
 		if(camera_int)
 			camera_int.c_tag = camera.c_tag + " interior"
+*/
 
 /*
 ** PRESETS SPAWNERS

@@ -7,7 +7,7 @@
 	disp_icon_state = "ace_autocannon"
 	activation_sounds = list('sound/weapons/vehicles/autocannon_fire.ogg')
 
-	health = 500
+	max_integrity = 500
 	firing_arc = 60
 
 	ammo = new /obj/item/ammo_magazine/hardpoint/ace_autocannon

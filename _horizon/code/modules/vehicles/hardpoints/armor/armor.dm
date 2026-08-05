@@ -7,4 +7,4 @@
 
 	damage_multiplier = 0.5
 
-	health = 1000
+	max_integrity = 1000

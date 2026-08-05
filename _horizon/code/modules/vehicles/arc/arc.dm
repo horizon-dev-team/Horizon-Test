@@ -13,12 +13,11 @@
 	bound_x = -32
 	bound_y = -32
 
-	health = 800
+	max_integrity = 800
 
 	interior_map = /datum/map_template/interior/arc
 
 	passengers_slots = 2 // 5 total. Reserved slots are added to passenger slots.
-	xenos_slots = 4
 
 	entrances = list(
 		"right" = list(-2, 0),
@@ -48,7 +47,7 @@
 
 	vehicle_flags = VEHICLE_CLASS_LIGHT
 
-	mob_size_required_to_hit = MOB_SIZE_XENO
+//	mob_size_required_to_hit = MOB_SIZE_XENO
 
 	dmg_multipliers = list(
 		"all" = 1,
@@ -90,15 +89,17 @@
 			if(modifiers[LEFT_CLICK] && modifiers[CTRL_CLICK])
 				activate_horn()
 
+/*
 /obj/vehicle/multitile/arc/get_examine_text(mob/user)
 	. = ..()
 	if(!isxeno(user))
 		return
 
-	if(health > 0)
+	if(atom_integrity > 0)
 		. += SPAN_XENO("[src] can be crawled under once destroyed.")
 	else
 		. += SPAN_XENO("[src] can be crawled under by <b>dragging our sprite</b> to it.")
+*/
 
 /obj/vehicle/multitile/arc/proc/on_antenna_toggle(datum/source)
 	SIGNAL_HANDLER
@@ -116,14 +117,14 @@
 
 /obj/vehicle/multitile/arc/process()
 	var/turf/arc_turf = get_turf(src)
-	if((health <= 0) || !visible_in_tacmap || !is_ground_level(arc_turf.z))
+	if((atom_integrity <= 0) || !visible_in_tacmap || !is_ground_level(arc_turf.z))
 		return
 
 	var/obj/item/hardpoint/support/arc_antenna/antenna = locate() in hardpoints
-	if(!antenna || (antenna.health <= 0))
+	if(!antenna || (antenna.get_integrity() <= 0))
 		clear_tacmap()
 		return
-
+/*
 	for(var/mob/living/carbon/xenomorph/current_xeno as anything in GLOB.living_xeno_list)
 		var/turf/xeno_turf = get_turf(current_xeno)
 		if(!is_ground_level(xeno_turf.z))
@@ -142,25 +143,13 @@
 			SSminimaps.remove_marker(current_xeno)
 			current_xeno.add_minimap_marker()
 			minimap_added -= xeno_weakref
+*/
 
 /obj/vehicle/multitile/arc/relaymove(mob/user, direction)
 	if(antenna_deployed)
 		return FALSE
 
 	return ..()
-
-/obj/vehicle/multitile/arc/load_role_reserved_slots()
-	var/datum/role_reserved_slots/RRS = new
-	RRS.category_name = "CIC Officer"
-	RRS.roles = list(JOB_SO, JOB_SEA, JOB_XO, JOB_CO, JOB_GENERAL)
-	RRS.total = 2
-	role_reserved_slots += RRS
-
-	RRS = new
-	RRS.category_name = "Intelligence Officer"
-	RRS.roles = list(JOB_INTEL)
-	RRS.total = 1
-	role_reserved_slots += RRS
 
 /obj/vehicle/multitile/arc/set_seated_mob(seat, mob/living/M)
 	. = ..()
@@ -211,7 +200,7 @@
 	if((M != user) || !isxeno(user))
 		return
 
-	if(health > 0)
+	if(atom_integrity > 0)
 		to_chat(user, SPAN_XENO("We can't go under [src] until it is destroyed!"))
 		return
 

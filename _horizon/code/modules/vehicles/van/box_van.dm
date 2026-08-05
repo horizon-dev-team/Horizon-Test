@@ -29,7 +29,6 @@
 	vehicle_flags = VEHICLE_CLASS_WEAK
 
 	passengers_slots = 4
-	xenos_slots = 2
 
 	misc_multipliers = list(
 		"move" = 0.5, // fucking annoying how this is the only way to modify speed
@@ -193,7 +192,7 @@
 			return
 		var/obj/item/hardpoint/health
 		for(var/obj/item/hardpoint/potential_hardpoint in hardpoints)
-			if(potential_hardpoint.health < initial(potential_hardpoint.health))
+			if(potential_hardpoint.get_integrity() < initial(potential_hardpoint.get_integrity()))
 				health = potential_hardpoint
 				break
 

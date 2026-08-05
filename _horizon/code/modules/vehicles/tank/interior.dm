@@ -12,9 +12,9 @@
 	mouse_opacity = FALSE
 	density = TRUE
 
-	unacidable = TRUE
-	unslashable = TRUE
-	explo_proof = TRUE
+////	unacidable = TRUE
+//	unslashable = TRUE
+//	explo_proof = TRUE
 
 	icon = 'icons/obj/vehicles/interiors/tank.dmi'
 	icon_state = "prop0"

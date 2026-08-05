@@ -23,7 +23,7 @@
 
 	var/list/usable_hps = V.get_activatable_hardpoints(seat)
 	if(!LAZYLEN(usable_hps))
-		to_chat(M, SPAN_WARNING("None of the hardpoints can be activated or they are all broken."))
+		to_chat(M, span_warning("None of the hardpoints can be activated or they are all broken."))
 		return
 
 	var/obj/item/hardpoint/HP = tgui_input_list(usr, "Select a hardpoint.", "Switch Hardpoint", usable_hps)
@@ -37,8 +37,8 @@
 	V.active_hp[seat] = HP
 	var/msg = "You select \the [HP]."
 	if(HP.ammo)
-		msg += " Ammo: <b>[SPAN_HELPFUL(HP.ammo.current_rounds)]/[SPAN_HELPFUL(HP.ammo.max_rounds)]</b> | Mags: <b>[SPAN_HELPFUL(LAZYLEN(HP.backup_clips))]/[SPAN_HELPFUL(HP.max_clips)]</b>"
-	to_chat(M, SPAN_WARNING(msg))
+		msg += " Ammo: <b>[span_nicegreen(HP.ammo.current_rounds)]/[span_nicegreen(HP.ammo.max_rounds)]</b> | Mags: <b>[span_nicegreen(LAZYLEN(HP.backup_clips))]/[span_nicegreen(HP.max_clips)]</b>"
+	to_chat(M, span_warning(msg))
 
 //cycles through hardpoints in a activatable hardpoints list without asking anything
 /obj/vehicle/multitile/proc/cycle_hardpoint()
@@ -59,7 +59,7 @@
 
 	var/list/usable_hps = V.get_activatable_hardpoints(seat)
 	if(!LAZYLEN(usable_hps))
-		to_chat(M, SPAN_WARNING("None of the hardpoints can be activated or they are all broken."))
+		to_chat(M, span_warning("None of the hardpoints can be activated or they are all broken."))
 		return
 	var/new_hp = usable_hps.Find(V.active_hp[seat])
 	if(!new_hp)
@@ -77,8 +77,8 @@
 	V.active_hp[seat] = HP
 	var/msg = "You select \the [HP]."
 	if(HP.ammo)
-		msg += " Ammo: <b>[SPAN_HELPFUL(HP.ammo.current_rounds)]/[SPAN_HELPFUL(HP.ammo.max_rounds)]</b> | Mags: <b>[SPAN_HELPFUL(LAZYLEN(HP.backup_clips))]/[SPAN_HELPFUL(HP.max_clips)]</b>"
-	to_chat(M, SPAN_WARNING(msg))
+		msg += " Ammo: <b>[span_nicegreen(HP.ammo.current_rounds)]/[span_nicegreen(HP.ammo.max_rounds)]</b> | Mags: <b>[span_nicegreen(LAZYLEN(HP.backup_clips))]/[span_nicegreen(HP.max_clips)]</b>"
+	to_chat(M, span_warning(msg))
 
 // Used to lock/unlock the vehicle doors to anyone without proper access
 /obj/vehicle/multitile/proc/toggle_door_lock()
@@ -100,7 +100,7 @@
 		return
 
 	V.door_locked = !V.door_locked
-	to_chat(M, SPAN_NOTICE("You [V.door_locked ? "lock" : "unlock"] the vehicle doors."))
+	to_chat(M, span_notice("You [V.door_locked ? "lock" : "unlock"] the vehicle doors."))
 
 //opens vehicle status window with HP and ammo of hardpoints
 /obj/vehicle/multitile/proc/get_status_info()
@@ -124,11 +124,11 @@
 	if(!seat)
 		return
 
-	V.tgui_interact(user)
+	V.ui_interact(user)
 
 // BEGIN TGUI \\
 
-/obj/vehicle/multitile/tgui_interact(mob/user, datum/tgui/ui)
+/obj/vehicle/multitile/ui_interact(mob/user, datum/tgui/ui)
 	ui = SStgui.try_update_ui(user, src, ui)
 	if(!ui)
 		ui = new(user, src, "VehicleStatus", "[capitalize(name)]")
@@ -148,7 +148,7 @@
 		))
 
 	data["resistance_data"] = resist_data_list
-	data["integrity"] = floor(100 * health / initial(health))
+	data["integrity"] = get_integrity_percentage()
 	data["door_locked"] = door_locked
 	data["total_passenger_slots"] = interior.passengers_slots
 	data["total_taken_slots"] = interior.passengers_taken_slots
@@ -265,7 +265,7 @@
 		return
 
 	if(V.nickname)
-		to_chat(user, SPAN_WARNING("Vehicle already has a \"[V.nickname]\" nickname."))
+		to_chat(user, span_warning("Vehicle already has a \"[V.nickname]\" nickname."))
 		return
 
 	var/new_nickname = stripped_input(user, "Enter a unique IC name or a callsign to add to your vehicle's name. [MAX_NAME_LEN] characters maximum. \n\nIMPORTANT! This is an IC nickname/callsign for your vehicle and you will be punished for putting in meme names.\nSINGLE USE ONLY.", "Name your vehicle", null, MAX_NAME_LEN)
@@ -279,18 +279,18 @@
 
 	//post-checks
 	if(V.seats[seat] != user) //check that we are still in seat
-		to_chat(user, SPAN_WARNING("You need to be buckled to vehicle seat to do this."))
+		to_chat(user, span_warning("You need to be buckled to vehicle seat to do this."))
 		return
 
 	if(V.nickname) //check again if second VC was faster.
-		to_chat(user, SPAN_WARNING("The other crewman beat you to it!"))
+		to_chat(user, span_warning("The other crewman beat you to it!"))
 		return
 
 	V.nickname = new_nickname
 	V.name = initial(V.name) + " \"[V.nickname]\""
-	to_chat(user, SPAN_NOTICE("You've added \"[V.nickname]\" nickname to your vehicle."))
+	to_chat(user, span_notice("You've added \"[V.nickname]\" nickname to your vehicle."))
 
-	message_admins(WRAP_STAFF_LOG(user, "added \"[V.nickname]\" nickname to their [initial(V.name)]. ([V.x],[V.y],[V.z])"), V.x, V.y, V.z)
+	//message_admins(WRAP_STAFF_LOG(user, "added \"[V.nickname]\" nickname to their [initial(V.name)]. ([V.x],[V.y],[V.z])"), V.x, V.y, V.z)
 
 	V.initialize_cameras(TRUE)
 
@@ -317,11 +317,11 @@
 		return
 
 	if(world.time < V.next_honk)
-		to_chat(user, SPAN_WARNING("You need to wait [(V.next_honk - world.time) / 10] seconds."))
+		to_chat(user, span_warning("You need to wait [(V.next_honk - world.time) / 10] seconds."))
 		return
 
 	V.next_honk = world.time + 10 SECONDS
-	to_chat(user, SPAN_NOTICE("You activate vehicle's horn."))
+	to_chat(user, span_notice("You activate vehicle's horn."))
 	V.perform_honk()
 
 /obj/vehicle/multitile/proc/perform_honk()
@@ -352,8 +352,8 @@
 	if(!seat)
 		return
 
-	if(V.health < initial(V.health) * 0.5)
-		to_chat(user, SPAN_WARNING("\The [V]'s hull is too damaged to operate!"))
+	if(V.get_integrity() < V.max_integrity * 0.5)
+		to_chat(user, span_warning("\The [V]'s hull is too damaged to operate!"))
 
 	for(var/obj/item/hardpoint/special/firing_port_weapon/FPW in V.hardpoints)
 		if(FPW.allowed_seat == seat)
@@ -361,4 +361,4 @@
 				FPW.start_auto_reload(user)
 			return
 
-	to_chat(user, SPAN_WARNING("Warning. No FPW for [seat] found, tell a dev!"))
+	to_chat(user, span_warning("Warning. No FPW for [seat] found, tell a dev!"))

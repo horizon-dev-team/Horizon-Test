@@ -1,13 +1,8 @@
 /area/interior
-	ceiling = CEILING_METAL
-	requires_power = 0
-	unlimited_power = 1
+	requires_power = FALSE
 	icon = '_horizon/icons/turf/areas_interiors.dmi'
 	icon_state = "interior"
 	base_lighting_alpha = 255
-	flags_area = AREA_NOBURROW
-
-	ambience_exterior = '_horizon/sound/vehicle_interior1.ogg'
 	sound_environment = SOUND_ENVIRONMENT_ROOM
 
 /area/interior/vehicle/tank

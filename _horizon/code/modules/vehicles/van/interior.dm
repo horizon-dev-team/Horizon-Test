@@ -11,7 +11,7 @@
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	layer = WINDOW_LAYER
 	flags_atom = NOINTERACT
-	unacidable = TRUE
+////	unacidable = TRUE
 
 /obj/effect/vehicle_roof/van
 	name = "\improper van interior roof"
@@ -54,7 +54,7 @@
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	layer = WINDOW_LAYER
 	flags_atom = NOINTERACT
-	unacidable = TRUE
+//	unacidable = TRUE
 
 /obj/effect/vehicle_roof/clf_van
 	name = "\improper technical interior roof"
@@ -97,7 +97,7 @@
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	layer = WINDOW_LAYER
 	flags_atom = NOINTERACT
-	unacidable = TRUE
+//	unacidable = TRUE
 
 /obj/effect/vehicle_roof/box_van
 	name = "\improper van interior roof"
@@ -140,7 +140,7 @@
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	layer = WINDOW_LAYER
 	flags_atom = NOINTERACT
-	unacidable = TRUE
+//	unacidable = TRUE
 
 /obj/effect/vehicle_roof/pizza_van
 	name = "\improper van interior roof"

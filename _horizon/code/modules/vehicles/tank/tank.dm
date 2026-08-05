@@ -19,7 +19,6 @@
 	passengers_slots = 1
 	//this is done in case VCs die inside the tank, so that someone else can come in and take them out.
 	revivable_dead_slots = 2
-	xenos_slots = 4
 
 	entrances = list(
 		"back" = list(0, 2)
@@ -87,13 +86,6 @@
 		camera.c_tag = "#[rand(1,100)] M34A2 Tank"
 		if(camera_int)
 			camera_int.c_tag = camera.c_tag + " interior" //this fluff allows it to be at the start of cams list
-
-/obj/vehicle/multitile/tank/load_role_reserved_slots()
-	var/datum/role_reserved_slots/RRS = new
-	RRS.category_name = "Crewmen"
-	RRS.roles = list(JOB_TANK_CREW, JOB_UPP_CREWMAN, JOB_PMC_CREWMAN, JOB_ARMY_TANK)
-	RRS.total = 2
-	role_reserved_slots += RRS
 
 /obj/vehicle/multitile/tank/load_hardpoints()
 	add_hardpoint(new /obj/item/hardpoint/holder/tank_turret)
@@ -173,7 +165,7 @@
 	if((dropped != user) || !isxeno(user))
 		return
 
-	if(health > 0)
+	if(atom_integrity > 0)
 		to_chat(user, SPAN_XENO("We can't jump over [src] until it is destroyed!"))
 		return
 

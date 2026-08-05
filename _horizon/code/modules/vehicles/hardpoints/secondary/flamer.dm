@@ -7,7 +7,7 @@
 	disp_icon_state = "flamer"
 	activation_sounds = list('sound/weapons/vehicles/flamethrower.ogg')
 
-	health = 300
+	max_integrity = 300
 	firing_arc = 120
 
 	ammo = new /obj/item/ammo_magazine/hardpoint/secondary_flamer

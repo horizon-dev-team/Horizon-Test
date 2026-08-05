@@ -16,7 +16,6 @@
 	interior_map = /datum/map_template/interior/apc_pmc
 
 	passengers_slots = 15
-	xenos_slots = 8
 
 	entrances = list(
 		"left" = list(2, 0),
@@ -81,19 +80,6 @@
 	var/turf/gotten_turf = get_turf(src)
 	if(gotten_turf && gotten_turf.z)
 		SSminimaps.add_marker(src, gotten_turf.z, MINIMAP_FLAG_USCM, "apc", 'icons/ui_icons/map_blips_large.dmi')
-
-/obj/vehicle/multitile/apc_pmc/load_role_reserved_slots()
-	var/datum/role_reserved_slots/RRS = new
-	RRS.category_name = "Crewmen"
-	RRS.roles = list(JOB_PMC_LEAD_INVEST, JOB_PMC_LEADER, JOB_WY_COMMANDO_LEADER, JOB_PMC_CREWMAN)
-	RRS.total = 2
-	role_reserved_slots += RRS
-
-	RRS = new
-	RRS.category_name = "Synthetic Unit"
-	RRS.roles = list(JOB_PMC_SYNTH)
-	RRS.total = 1
-	role_reserved_slots += RRS
 
 /obj/vehicle/multitile/apc_pmc/add_seated_verbs(mob/living/M, seat)
 	if(!M.client)

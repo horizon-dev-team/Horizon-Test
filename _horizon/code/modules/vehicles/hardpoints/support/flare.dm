@@ -12,7 +12,7 @@
 
 	activatable = TRUE
 
-	health = 500
+	max_integrity = 500
 	firing_arc = 120
 
 	ammo = new /obj/item/ammo_magazine/hardpoint/flare_launcher

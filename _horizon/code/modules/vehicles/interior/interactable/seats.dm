@@ -2,9 +2,9 @@
 /obj/structure/bed/chair/comfy/vehicle
 	name = "seat"
 
-	unacidable = TRUE
-	unslashable = TRUE
-	explo_proof = TRUE
+//	unacidable = TRUE
+//	unslashable = TRUE
+//	explo_proof = TRUE
 	can_rotate = FALSE
 
 	//you want these chairs to not be easily obscured by objects
@@ -281,7 +281,7 @@
 		if(M && M.client)
 			M.client.change_view(8, vehicle)
 
-		if(vehicle.health < initial(vehicle.health) / 2)
+		if(vehicle.get_integrity() < vehicle.max_integrity * 0.5)
 			to_chat(M, SPAN_WARNING("\The [vehicle] is too damaged to operate the Firing Port Weapon!"))
 			return
 
@@ -315,13 +315,13 @@
 	icon = 'icons/obj/vehicles/interiors/general.dmi'
 	icon_state = "vehicle_seat"
 	var/image/chairbar = null
-	var/broken = FALSE
+	broken = FALSE
 	buildstackamount = 0
 	can_rotate = FALSE
 	picked_up_item = null
 
-	unslashable = FALSE
-	unacidable = TRUE
+//	unslashable = FALSE
+//	unacidable = TRUE
 
 	var/buckle_offset_x = 0
 	var/mob_old_x = 0
@@ -432,7 +432,7 @@
 		if(!HAS_TRAIT(W, TRAIT_TOOL_BLOWTORCH))
 			to_chat(user, SPAN_WARNING("You need a stronger blowtorch!"))
 			return
-		var/obj/item/tool/weldingtool/C = W
+		var/obj/item/weldingtool/C = W
 		if(C.remove_fuel(0,user))
 			playsound(src.loc, 'sound/items/weldingtool_weld.ogg', 25)
 			user.visible_message(SPAN_WARNING("[user] begins repairing \the [src]."),

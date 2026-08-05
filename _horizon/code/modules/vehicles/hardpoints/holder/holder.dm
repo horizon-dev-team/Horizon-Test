@@ -9,25 +9,25 @@
 	var/list/hardpoints
 
 /obj/item/hardpoint/holder/Destroy()
-	QDEL_NULL_LIST(hardpoints)
+	QDEL_LIST(hardpoints)
 
 	. = ..()
 
 /obj/item/hardpoint/holder/update_icon()
-	overlays.Cut()
+	cut_overlays()
 	for(var/obj/item/hardpoint/H in hardpoints)
 		var/image/I = H.get_hardpoint_image()
-		overlays += I
+		add_overlay(I)
 
-/obj/item/hardpoint/holder/get_examine_text(mob/user)
+/obj/item/hardpoint/holder/examine(mob/user)
 	. = ..()
-	if(health <= 0)
+	if(atom_integrity <= 0)
 		. += "It's busted!"
 	else if(isobserver(user) || (ishuman(user) && (skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_NOVICE) || skillcheck(user, SKILL_VEHICLE, SKILL_VEHICLE_CREWMAN))))
 		. += "It's at [round(get_integrity_percent(), 1)]% integrity!"
 	for(var/obj/item/hardpoint/H in hardpoints)
 		. += "There is \a [H] module installed on [src]."
-		. += H.get_examine_text(user, TRUE)
+		. += H.examine(user)
 
 /obj/item/hardpoint/holder/get_tgui_info()
 	var/list/data = list()
@@ -69,14 +69,14 @@
 	return LAZYISIN(accepted_hardpoints, H.type)
 
 /obj/item/hardpoint/holder/proc/install(obj/item/hardpoint/H, mob/user)
-	if(health <= 0)
-		to_chat(user, SPAN_WARNING("All the mounting points on \the [src] are broken!"))
+	if(atom_integrity <= 0)
+		to_chat(user, span_warning("All the mounting points on \the [src] are broken!"))
 		return
 
-	user.visible_message(SPAN_NOTICE("[user] begins installing \the [H] on the [H.slot] hardpoint slot of \the [src]."),
-		SPAN_NOTICE("You begin installing \the [H] on the [H.slot] hardpoint slot of \the [src]."))
-	if(!do_after(user, 120 * user.get_skill_duration_multiplier(SKILL_ENGINEER), INTERRUPT_ALL, BUSY_ICON_FRIENDLY))
-		user.visible_message(SPAN_WARNING("[user] stops installing \the [H] on \the [src]."), SPAN_WARNING("You stop installing \the [H] on \the [src]."))
+	user.visible_message(span_notice("[user] begins installing \the [H] on the [H.slot] hardpoint slot of \the [src]."),
+		span_notice("You begin installing \the [H] on the [H.slot] hardpoint slot of \the [src]."))
+	if(!cm_do_after(user, 120 * user.get_skill_duration_multiplier(SKILL_ENGINEER), src, INTERRUPT_ALL))
+		user.visible_message(span_warning("[user] stops installing \the [H] on \the [src]."), span_warning("You stop installing \the [H] on \the [src]."))
 		return
 
 	user.temp_drop_inv_item(H, 0)
@@ -88,10 +88,10 @@
 	if(!LAZYISIN(hardpoints, H))
 		return
 
-	user.visible_message(SPAN_NOTICE("[user] begins removing \the [H] from the [H.slot] hardpoint slot of \the [src]."),
-		SPAN_NOTICE("You begin removing \the [H] from the [H.slot] hardpoint slot of \the [src]."))
-	if(!do_after(user, 120 * user.get_skill_duration_multiplier(SKILL_ENGINEER), INTERRUPT_ALL, BUSY_ICON_FRIENDLY))
-		user.visible_message(SPAN_WARNING("[user] stops removing \the [H] from \the [src]."), SPAN_WARNING("You stop removing \the [H] from \the [src]."))
+	user.visible_message(span_notice("[user] begins removing \the [H] from the [H.slot] hardpoint slot of \the [src]."),
+		span_notice("You begin removing \the [H] from the [H.slot] hardpoint slot of \the [src]."))
+	if(!cm_do_after(user, 120 * user.get_skill_duration_multiplier(SKILL_ENGINEER), src, INTERRUPT_ALL))
+		user.visible_message(span_warning("[user] stops removing \the [H] from \the [src]."), span_warning("You stop removing \the [H] from \the [src]."))
 		return
 
 	remove_hardpoint(H, get_turf(user))
@@ -99,9 +99,9 @@
 	update_icon()
 
 /obj/item/hardpoint/holder/attackby(obj/item/O, mob/user)
-	if(HAS_TRAIT(O, TRAIT_TOOL_CROWBAR))
+	if(iscrowbar(O))
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_TRAINED))
-			to_chat(user, SPAN_WARNING("You don't know what to do with \the [O] on \the [src]."))
+			to_chat(user, span_warning("You don't know what to do with \the [O] on \the [src]."))
 			return
 
 		var/chosen_hp = tgui_input_list(usr, "Select a hardpoint to remove", "Vehicle Hardpoint Removal", (hardpoints + "Cancel"))
@@ -114,12 +114,12 @@
 
 	if(istype(O, /obj/item/hardpoint))
 		if(!skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_TRAINED))
-			to_chat(user, SPAN_WARNING("You don't know what to do with \the [O] on \the [src]."))
+			to_chat(user, span_warning("You don't know what to do with \the [O] on \the [src]."))
 			return
 
 		var/obj/item/hardpoint/H = O
 		if(!(H.type in accepted_hardpoints))
-			to_chat(user, SPAN_WARNING("You don't know what to do with \the [O] on \the [src]."))
+			to_chat(user, span_warning("You don't know what to do with \the [O] on \the [src]."))
 			return
 
 		install(H, user)
@@ -145,7 +145,7 @@
 	hardpoints -= H
 	H.owner = null
 
-	if(H.health <= 0)
+	if(H.atom_integrity <= 0)
 		qdel(H)
 
 //Returns all activatable hardpoints

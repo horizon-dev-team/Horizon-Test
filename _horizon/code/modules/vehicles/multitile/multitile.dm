@@ -9,7 +9,8 @@
 	name = "multitile vehicle"
 	desc = "Get inside to operate the vehicle."
 
-	health = 1000
+	max_integrity = 1000
+	uses_integrity = TRUE
 
 	//How big the vehicle is in pixels, defined facing SOUTH, which is the byond default (i.e. a 3x3 vehicle is going to be 96x96) ~Cakey
 	bound_width = 32
@@ -19,9 +20,7 @@
 	bound_x = 0
 	bound_y = 0
 
-	can_buckle = FALSE
-
-	light_system = MOVABLE_LIGHT
+	light_system = OVERLAY_LIGHT
 	light_range = 5
 
 	var/atom/movable/vehicle_light_holder/lighting_holder
@@ -41,7 +40,8 @@
 	// List of verbs to give when a mob is seated in each seat type
 	var/list/seat_verbs
 
-	move_delay = VEHICLE_SPEED_STATIC
+	/// CM13 movement delay — TG uses movedelay, multitile uses move_delay
+	var/move_delay = VEHICLE_SPEED_STATIC
 	// The next world.time when the vehicle can move
 	var/next_move = 0
 	// How much momentum the vehicle has. Increases by 1 each move
@@ -69,17 +69,24 @@
 
 	req_access = list() //List of accesses you need to enter
 	req_one_access = list() //List of accesses you need one of to enter
-	locked = TRUE //Whether we should skip access checking for entry
+	/// Whether access checking is skipped for entry
+	var/locked = TRUE
 
 	// List of all hardpoints attached to the vehicle
 	var/list/hardpoints = list()
 	//List of all hardpoints you can attach to this vehicle
 	var/list/hardpoints_allowed = list()
 
-	var/mob_size_required_to_hit = MOB_SIZE_XENO_SMALL
+	// XENO REMOVED: was MOB_SIZE_XENO_SMALL
+	var/mob_size_required_to_hit = MOB_SIZE_SMALL
 
 	//variable for various flags
 	var/vehicle_flags = VEHICLE_CLASS_WEAK
+
+	// The mobs that are in each position/seat of the vehicle
+	var/list/seats = list(
+		VEHICLE_DRIVER = null
+	)
 
 	// References to the active/chosen hardpoint for each seat
 	var/active_hp = list(
@@ -92,8 +99,6 @@
 
 	//common passenger slots
 	var/passengers_slots = 2
-	//xenos passenger slots
-	var/xenos_slots = 2
 	//some vehicles have special slots for dead revivable corpses for various reasons
 	//revivable corpses slots
 	var/revivable_dead_slots = 0
@@ -106,12 +111,8 @@
 
 	//list of stuff we do NOT want to be pulled inside
 	var/list/forbidden_atoms = list(
-		/obj/structure/airlock_assembly,
+//		/obj/structure/airlock_assembly,
 		/obj/structure/barricade,
-		/obj/structure/machinery/defenses,
-		/obj/structure/machinery/m56d_post,
-		/obj/structure/machinery/cm_vending,
-		/obj/structure/machinery/vending,
 		/obj/structure/window,
 		/obj/structure/windoor_assembly,
 	)
@@ -123,19 +124,12 @@
 	//vehicles with this off will be ignored by tacmap.
 	var/visible_in_tacmap = TRUE
 
-	//Amount of seconds spent on entering/leaving. Always the same when dragging stuff (2 seconds) and for xenos (1 second)
+	//Amount of seconds spent on entering/leaving. Always the same when dragging stuff (2 seconds)
 	var/entrance_speed = 1 SECONDS
 
 	//Whether or not entering the vehicle is ID restricted to those with crewman, command or MP access only. Toggleable by the driver.
 	//Having command/MP/Crewmen access won't matter if the faction of the vehicle is not yours, so you can't infiltrate the vehicle.
 	var/door_locked = FALSE
-	req_one_access = list(
-		ACCESS_MARINE_CREWMAN,
-		// Officers always have access
-		ACCESS_MARINE_COMMAND,
-		// You can't hide from the MPs
-		ACCESS_MARINE_BRIG,
-	)
 
 	//used for IFF stuff. Determined by driver. It will remember faction of a last driver. IFF-compatible rounds won't damage vehicle.
 	var/vehicle_faction = ""
@@ -162,7 +156,7 @@
 
 	// This is more important than you think.
 	// Explosive waves can propagate through the vehicle and hit it multiple times
-	var/explosive_resistance = 200
+	explosive_resistance = 200
 
 	//Placeholders
 	icon = 'icons/obj/vehicles/vehicles.dmi'
@@ -189,9 +183,6 @@
 	else if(light_range)
 		set_light_on(TRUE)
 
-	light_pixel_x = -bound_x
-	light_pixel_y = -bound_y
-
 	healthcheck()
 	update_icon()
 	update_minimap_icon()
@@ -211,7 +202,7 @@
 	interior.create_interior(interior_map)
 
 	if(!interior)
-		to_world("Interior [interior_map] failed to load for [src]! Tell a developer!")
+		to_chat(world, "Interior [interior_map] failed to load for [src]! Tell a developer!")
 		qdel(src)
 		return
 
@@ -219,7 +210,9 @@
 	if(!QDELETED(interior))
 		QDEL_NULL(interior)
 
-	QDEL_NULL_LIST(hardpoints)
+	for(var/obj/item/hardpoint/H in hardpoints)
+		qdel(H)
+	hardpoints.Cut()
 
 	GLOB.all_multi_vehicles -= src
 
@@ -234,16 +227,17 @@
 	if(camera_int)
 		camera_int.toggle_cam_status(on)
 
-/obj/vehicle/multitile/get_explosion_resistance()
+/obj/vehicle/multitile/proc/get_explosion_resistance()
 	return explosive_resistance
 
-/obj/vehicle/multitile/update_icon()
-	overlays.Cut()
+/obj/vehicle/multitile/update_icon(updates = ALL)
+	. = ..()
+	cut_overlays()
 
-	if(health <= initial(health))
+	if(get_integrity() <= max_integrity)
 		var/image/damage_overlay = image(icon, icon_state = "damaged_frame", layer = layer+0.1)
-		damage_overlay.alpha = 255 * (1 - (health / initial(health)))
-		overlays += damage_overlay
+		damage_overlay.alpha = 255 * (1 - (get_integrity() / max_integrity))
+		add_overlay(damage_overlay)
 
 	var/amt_hardpoints = LAZYLEN(hardpoints)
 	if(amt_hardpoints)
@@ -255,26 +249,27 @@
 				var/list/image/hardpoint_image_list = hardpoint_image // Linter will complain about iterating on "an image" otherwise
 				for(var/image/subimage in hardpoint_image_list)
 					subimage.layer = layer + hardpoint.hdpt_layer * 0.1
-			overlays += hardpoint_image
+			add_overlay(hardpoint_image)
 
 	if(clamped)
 		var/image/J = image(icon, icon_state = "vehicle_clamp", layer = layer+0.1)
-		overlays += J
+		add_overlay(J)
 
 //Normal examine() but tells the player what is installed and if it's broken
-/obj/vehicle/multitile/get_examine_text(mob/user)
+/obj/vehicle/multitile/examine(mob/user)
 	. = ..()
 	for(var/obj/item/hardpoint/H in hardpoints)
 		. += "There [H.p_are()] \a [H] module[H.p_s()] installed."
-		H.examine(user, TRUE)
+		. += H.examine(user)
 	if(clamped)
 		. += "There is a vehicle clamp attached."
-	if(isxeno(user) && interior)
-		var/passengers_amount = interior.passengers_taken_slots
-		for(var/datum/role_reserved_slots/RRS in interior.role_reserved_slots)
-			passengers_amount += RRS.taken
-		if(passengers_amount > 0)
-			. += "You can sense approximately [passengers_amount] host\s inside."
+	// XENO REMOVED: isxeno(user) block commented out
+	// if(isxeno(user) && interior)
+	// 	var/passengers_amount = interior.passengers_taken_slots
+	// 	for(var/datum/role_reserved_slots/RRS in interior.role_reserved_slots)
+	// 		passengers_amount += RRS.taken
+	// 	if(passengers_amount > 0)
+	// 		. += "You can sense approximately [passengers_amount] host\s inside."
 
 /obj/vehicle/multitile/proc/load_hardpoints()
 	return
@@ -300,14 +295,14 @@
 		// Health check is done before the hardpoint takes damage
 		// This way, the frame won't take damage at the same time hardpoints break
 		if(H.can_take_damage())
-			H.take_damage(floor(damage * get_dmg_multi(type)))
+			H.take_damage(round(damage * get_dmg_multi(type)))
 			all_broken = FALSE
 
 	// If all hardpoints are broken, the vehicle frame begins taking full damage
 	if(all_broken)
-		health = max(0, health - damage * get_dmg_multi(type))
+		update_integrity(max(0, get_integrity() - damage * get_dmg_multi(type)))
 	else //otherwise, 1/10th of damage lands on the hull
-		health = max(0, health - floor(damage * get_dmg_multi(type) / 10))
+		update_integrity(max(0, get_integrity() - round(damage * get_dmg_multi(type) / 10)))
 
 	if(ismob(attacker))
 		var/mob/M = attacker
@@ -329,7 +324,7 @@
 /obj/vehicle/multitile/proc/remove_seated_verbs(mob/living/M, seat)
 	return
 
-/obj/vehicle/multitile/set_seated_mob(seat, mob/living/M)
+/obj/vehicle/multitile/proc/set_seated_mob(seat, mob/living/M)
 	// Give/remove verbs
 	if(QDELETED(M))
 		var/mob/living/L = seats[seat]
@@ -343,8 +338,8 @@
 	if(!istype(M))
 		return FALSE
 
-	M.set_interaction(src)
-	M.reset_view(src)
+	M.interactee = src
+	M.reset_perspective(src)
 	give_action(M, /datum/action/human_action/vehicle_unbuckle)
 	return TRUE
 
@@ -371,14 +366,43 @@
 		return interior.get_passengers()
 	return null
 
-/obj/vehicle/multitile/proc/load_role_reserved_slots()
+/obj/vehicle/multitile/proc/healthcheck()
 	return
+
+/*
+/obj/vehicle/proc/healthcheck()
+	if(integrity <= 0)
+		explode()
+
+/obj/vehicle/proc/explode()
+	src.visible_message(SPAN_DANGER("<B>[src] blows apart!</B>"), null, null, 1)
+	var/turf/Tsec = get_turf(src)
+
+	new /obj/item/stack/rods(Tsec)
+	new /obj/item/stack/rods(Tsec)
+	new /obj/item/stack/cable_coil/cut(Tsec)
+
+	if(cell)
+		cell.forceMove(Tsec)
+		cell.update_icon()
+		cell = null
+
+	if(buckled_mob)
+		buckled_mob.apply_effect(5, STUN)
+		buckled_mob.apply_effect(5, WEAKEN)
+		unbuckle()
+
+	new /obj/effect/spawner/gibspawner/robot(Tsec)
+	new /obj/effect/decal/cleanable/blood/oil(src.loc)
+
+	qdel(src)
+*/
 
 //Special armored vic healthcheck that mainly updates the hardpoint states
 /obj/vehicle/multitile/healthcheck()
 	var/all_broken = 1 //Whether or not to call handle_all_modules_broken()
 	for(var/obj/item/hardpoint/H in hardpoints)
-		if(H.health <= 0)
+		if(H.get_integrity() <= 0)
 			H.deactivate()
 			H.remove_buff(src)
 		else
@@ -389,11 +413,11 @@
 		handle_all_modules_broken()
 
 	//vehicle is dead, no more lights
-	if(health <= 0 && lighting_holder.light_range)
+	if(get_integrity() <= 0 && lighting_holder?.light_range)
 		lighting_holder.set_light_on(FALSE)
 		update_minimap_icon()
 	else
-		if(!lighting_holder.light)
+		if(lighting_holder && !lighting_holder.light_range)
 			lighting_holder.set_light_on(TRUE)
 	update_icon()
 
@@ -416,8 +440,6 @@
 
 //Miscellaneous additions
 /obj/effect/vehicle_spawner/proc/load_misc(obj/vehicle/multitile/V)
-
-	V.load_role_reserved_slots()
 	V.initialize_cameras()
 	//transfer mapped in edits
 	if(color)
@@ -443,7 +465,7 @@
 			M.try_rotate(90)
 			M.try_rotate(90)
 
-/obj/vehicle/multitile/get_applying_acid_time()
+/obj/vehicle/multitile/proc/get_applying_acid_time()
 	return 3 SECONDS
 
 //handling dangerous acidic environment, like acidic spray or toxic waters, maybe toxic vapor in future
@@ -452,7 +474,7 @@
 		Loco.handle_acid_damage(A)
 
 /atom/movable/vehicle_light_holder
-	light_system = MOVABLE_LIGHT
+	light_system = OVERLAY_LIGHT
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 
 /atom/movable/vehicle_light_holder/Initialize(mapload, ...)
@@ -469,11 +491,6 @@
 	forceMove(get_turf(mover))
 
 ///Updates the vehicles minimap icon
+/// TODO: SSminimaps does not exist in TG. Implement minimap support or remove.
 /obj/vehicle/multitile/proc/update_minimap_icon(modules_broken)
-	if(!minimap_icon_state)
-		return
-	SSminimaps.remove_marker(src)
-	minimap_icon_state = initial(minimap_icon_state)
-	if(health <= 0 || modules_broken)
-		minimap_icon_state += "_wreck"
-	SSminimaps.add_marker(src, minimap_flags, image('icons/ui_icons/map_blips_large.dmi', null, minimap_icon_state, HIGH_FLOAT_LAYER))
+	return

@@ -7,7 +7,7 @@
 	disp_icon_state = "ltb_cannon"
 	activation_sounds = list('sound/weapons/vehicles/cannon_fire1.ogg', 'sound/weapons/vehicles/cannon_fire2.ogg')
 
-	health = 500
+	max_integrity = 500
 	firing_arc = 60
 
 	ammo = new /obj/item/ammo_magazine/hardpoint/ltb_cannon

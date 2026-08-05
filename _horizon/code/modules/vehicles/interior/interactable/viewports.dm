@@ -5,9 +5,9 @@
 	icon_state = "viewport"
 	layer = INTERIOR_DOOR_LAYER
 
-	unacidable = TRUE
-	unslashable = TRUE
-	explo_proof = TRUE
+//	unacidable = TRUE
+//	unslashable = TRUE
+//	explo_proof = TRUE
 
 	// The vehicle this seat is tied to
 	var/obj/vehicle/multitile/vehicle = null

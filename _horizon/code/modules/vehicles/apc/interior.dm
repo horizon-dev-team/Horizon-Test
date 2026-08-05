@@ -55,10 +55,10 @@
 	icon = 'icons/obj/vehicles/interiors/general.dmi'
 	icon_state = ""
 
-	unacidable = TRUE
-	unslashable = TRUE
-	breakable = FALSE
-	explo_proof = TRUE
+//	unacidable = TRUE
+//	unslashable = TRUE
+//	breakable = FALSE
+//	explo_proof = TRUE
 
 /obj/structure/prop/vehicle/firing_port_weapon
 	name = "M56 FPW handle"
@@ -74,6 +74,7 @@
 
 	var/obj/structure/bed/chair/comfy/vehicle/support_gunner/SG_seat
 
+/*
 /obj/structure/prop/vehicle/firing_port_weapon/get_examine_text(mob/user)
 	. = ..()
 	if(!ishuman(user))
@@ -89,6 +90,7 @@
 				. += SPAN_NOTICE("The [FPW.name]'s ammo count is: [SPAN_HELPFUL(FPW.ammo.current_rounds)]/[SPAN_WARNING(FPW.ammo.max_rounds)].")
 				break
 	. += SPAN_HELPFUL("Clicking on the [name] while being adjacent to support gunner seat will buckle you in and give you the control of the M56 FPW.")
+*/
 
 /obj/structure/prop/vehicle/firing_port_weapon/attack_hand(mob/living/carbon/human/H)
 	if(!istype(H))

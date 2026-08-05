@@ -31,7 +31,7 @@
 		return
 
 	// Won't even consider moves when the vehicle is broken
-	if(health <= 0)
+	if(get_integrity() <= 0)
 		return FALSE
 
 	return pre_movement(direction)
@@ -76,12 +76,12 @@
 		H.on_move(old_turf, current_loc, direction)
 
 	if(movement_sound && world.time > move_next_sound_play)
-		playsound(src, movement_sound, vol = 20, sound_range = 30)
+		playsound(src, movement_sound, vol = 20, extrarange = 30)
 		move_next_sound_play = world.time + 10
 
 	last_move_dir = direction
 
-	if(force && (health <= 0)) // Broken and forced movement (currently only xenos)
+	if(force && (get_integrity() <= 0)) // Broken and forced movement (currently only xenos)
 		interior.drop_human_bodies(old_turf)
 
 	return TRUE
@@ -107,7 +107,7 @@
 	last_move_dir = dir
 
 	if(movement_sound && world.time > move_next_sound_play)
-		playsound(src, movement_sound, vol = 20, sound_range = 30)
+		playsound(src, movement_sound, vol = 20, extrarange = 30)
 		move_next_sound_play = world.time + 10
 
 	update_icon()
@@ -171,7 +171,7 @@
 
 	// Crashed with something that stopped us
 	if(!can_move)
-		move_momentum = floor(move_momentum/2)
+		move_momentum = round(move_momentum/2)
 		update_next_move()
 		interior_crash_effect()
 
@@ -266,7 +266,7 @@
 	if(abs(move_momentum) <= 1)
 		return
 
-	var/fling_distance = ceil(move_momentum/move_max_momentum) * 2
+	var/fling_distance = -round(-(move_momentum/move_max_momentum)) * 2
 	var/turf/target = interior.get_middle_turf()
 
 	for (var/x in 0 to fling_distance-1)
@@ -284,14 +284,14 @@
 			if(isliving(A))
 				var/mob/living/M = A
 
-				shake_camera(M, 2, ceil(move_momentum/move_max_momentum) * 1)
+				shake_camera(M, 2, -round(-(move_momentum/move_max_momentum)) * 1)
 				if(!M.buckled)
-					M.apply_effect(1, STUN)
-					M.apply_effect(2, WEAKEN)
+					M.apply_effect(1, EFFECT_STUN)
+					M.apply_effect(2, EFFECT_KNOCKDOWN)
 
 			// YOU'RE LIKE A CAR CRASH IN SLOW MOTION!
 			// IT'S LIKE I'M WATCHIN' YA FLY THROUGH A WINDSHIELD!
-			INVOKE_ASYNC(A, TYPE_PROC_REF(/atom/movable, throw_atom), target, fling_distance, SPEED_VERY_FAST, src, TRUE)
+			INVOKE_ASYNC(A, TYPE_PROC_REF(/atom/movable, throw_at), target, fling_distance, SPEED_VERY_FAST, src, TRUE)
 
 /obj/vehicle/multitile/proc/at_munition_interior_explosion_effect(explosion_strength = 75, explosion_falloff = 50, shrapnel = TRUE, shrapnel_count = 48, datum/cause_data/cause_data)
 	if(!interior)

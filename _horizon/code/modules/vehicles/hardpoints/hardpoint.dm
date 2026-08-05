@@ -8,8 +8,9 @@
 	/// The vehicle this hardpoint is installed on.
 	var/obj/vehicle/multitile/owner
 
-	health = 100
-	w_class = SIZE_LARGE
+	max_integrity = 100
+	uses_integrity = TRUE
+	w_class = WEIGHT_CLASS_BULKY
 
 	/// Determines how much of any incoming damage is actually taken.
 	var/damage_multiplier = 1
@@ -64,6 +65,9 @@
 
 	/// Whether hardpoint has activatable ability like shooting or zooming.
 	var/activatable = 0
+
+	/// Whether this hardpoint is immune to explosions.
+	var/explo_proof = FALSE
 
 	/// Used to prevent welder click spam.
 	var/being_repaired = FALSE
@@ -148,7 +152,7 @@
 		owner.remove_hardpoint(src)
 		owner.update_icon()
 		owner = null
-	QDEL_NULL_LIST(backup_clips)
+	QDEL_LIST(backup_clips)
 	QDEL_NULL(ammo)
 	set_target(null)
 	return ..()
@@ -158,8 +162,8 @@
 		return
 
 	take_damage(severity / 2)
-	if(health <= 0)
-		visible_message(SPAN_WARNING("\The [src] disintegrates into useless pile of scrap under the damage it suffered."))
+	if(atom_integrity <= 0)
+		visible_message(span_warning("\The [src] disintegrates into useless pile of scrap under the damage it suffered."))
 		deconstruct(TRUE)
 
 /// Populate traits_to_give in this proc
@@ -184,27 +188,27 @@
 /obj/item/hardpoint/proc/can_take_damage()
 	if(!damage_multiplier)
 		return FALSE
-	if(health > 0)
+	if(atom_integrity > 0)
 		return TRUE
 
 /obj/item/hardpoint/proc/take_damage(damage)
-	if(health <= 0)
+	if(atom_integrity <= 0)
 		return
-	health = max(0, health - damage * damage_multiplier)
-	if(!health)
+	atom_integrity = max(0, atom_integrity - damage * damage_multiplier)
+	if(!atom_integrity)
 		on_destroy()
 
 /obj/item/hardpoint/proc/on_destroy()
 	return
 
 /obj/item/hardpoint/proc/is_activatable()
-	if(health <= 0)
+	if(atom_integrity <= 0)
 		return FALSE
 	return activatable
 
 //returns the integrity of the hardpoint module
 /obj/item/hardpoint/proc/get_integrity_percent()
-	return 100.0*health/initial(health)
+	return 100.0*atom_integrity/max_integrity
 
 /// Apply hardpoint effects to vehicle and self.
 /obj/item/hardpoint/proc/on_install(obj/vehicle/multitile/vehicle)
@@ -304,10 +308,10 @@
 
 	data["name"] = name
 
-	if(health <= 0)
-		data["health"] = null
+	if(atom_integrity <= 0)
+		data["atom_integrity"] = null
 	else
-		data["health"] = floor(get_integrity_percent())
+		data["atom_integrity"] = round(get_integrity_percent())
 
 	if(ammo)
 		data["uses_ammo"] = TRUE
@@ -332,9 +336,9 @@
 	return
 
 //examining a hardpoint
-/obj/item/hardpoint/get_examine_text(mob/user)
+/obj/item/hardpoint/examine(mob/user)
 	. = ..()
-	if(health <= 0)
+	if(atom_integrity <= 0)
 		. += "It's busted!"
 	else if(isobserver(user) || (ishuman(user) && (skillcheck(user, SKILL_ENGINEER, SKILL_ENGINEER_NOVICE) || skillcheck(user, SKILL_VEHICLE, SKILL_VEHICLE_CREWMAN))))
 		. += "It's at [round(get_integrity_percent(), 1)]% integrity!"
@@ -342,15 +346,15 @@
 //reloading hardpoint - take mag from backup clips and replace current ammo with it. Will change in future. Called via weapons loader
 /obj/item/hardpoint/proc/reload(mob/user)
 	if(!LAZYLEN(backup_clips))
-		to_chat(usr, SPAN_WARNING("\The [name] has no remaining backup clips."))
+		to_chat(usr, span_warning("\The [name] has no remaining backup clips."))
 		return
 
 	var/obj/item/ammo_magazine/A = LAZYACCESS(backup_clips, 1)
 	if(!A)
-		to_chat(user, SPAN_DANGER("Something went wrong! Ahelp and ask for a developer! Code: HP_RLDHP"))
+		to_chat(user, span_danger("Something went wrong! Ahelp and ask for a developer! Code: HP_RLDHP"))
 		return
 
-	to_chat(user, SPAN_NOTICE("You begin reloading \the [name]."))
+	to_chat(user, span_notice("You begin reloading \the [name]."))
 
 	sleep(20)
 
@@ -359,66 +363,66 @@
 	ammo = A
 	LAZYREMOVE(backup_clips, A)
 
-	to_chat(user, SPAN_NOTICE("You reload \the [name]."))
+	to_chat(user, span_notice("You reload \the [name]."))
 
 //try adding magazine to hardpoint's backup clips. Called via weapons loader
 /obj/item/hardpoint/proc/try_add_clip(obj/item/ammo_magazine/A, mob/user)
 	if(!ammo)
-		to_chat(user, SPAN_WARNING("\The [name] doesn't use ammunition."))
+		to_chat(user, span_warning("\The [name] doesn't use ammunition."))
 		return FALSE
 	if(max_clips == 0)
-		to_chat(user, SPAN_WARNING("\The [name] does not have room for additional ammo."))
+		to_chat(user, span_warning("\The [name] does not have room for additional ammo."))
 		return FALSE
 	else if(LAZYLEN(backup_clips) >= max_clips)
-		to_chat(user, SPAN_WARNING("\The [name]'s reloader is full."))
+		to_chat(user, span_warning("\The [name]'s reloader is full."))
 		return FALSE
 
-	to_chat(user, SPAN_NOTICE("You begin loading \the [A] into \the [name]."))
+	to_chat(user, span_notice("You begin loading \the [A] into \the [name]."))
 
-	if(!do_after(user, 10, INTERRUPT_ALL, BUSY_ICON_FRIENDLY))
-		to_chat(user, SPAN_WARNING("Something interrupted you while reloading \the [name]."))
+	if(!do_after(user, 1 SECONDS, target = src, timed_action_flags = INTERRUPT_ALL))
+		to_chat(user, span_warning("Something interrupted you while reloading \the [name]."))
 		return FALSE
 
 	if(LAZYLEN(backup_clips) >= max_clips)
-		to_chat(user, SPAN_WARNING("\The [name]'s reloader is full."))
+		to_chat(user, span_warning("\The [name]'s reloader is full."))
 		return FALSE
 
-	user.drop_inv_item_to_loc(A, src)
+	user.transferItemToLoc(A, src)
 
 	playsound(loc, 'sound/machines/hydraulics_2.ogg', 50)
 	LAZYADD(backup_clips, A)
-	to_chat(user, SPAN_NOTICE("You load \the [A] into \the [name]. Ammo: <b>[SPAN_HELPFUL(ammo.current_rounds)]/[SPAN_HELPFUL(ammo.max_rounds)]</b> | Mags: <b>[SPAN_HELPFUL(LAZYLEN(backup_clips))]/[SPAN_HELPFUL(max_clips)]</b>"))
+	to_chat(user, span_notice("You load \the [A] into \the [name]. Ammo: <b>[span_nicegreen(ammo.current_rounds)]/[span_nicegreen(ammo.max_rounds)]</b> | Mags: <b>[span_nicegreen(LAZYLEN(backup_clips))]/[span_nicegreen(max_clips)]</b>"))
 	return TRUE
 
 /obj/item/hardpoint/attackby(obj/item/O, mob/user)
 	if(iswelder(O))
 		if(!HAS_TRAIT(O, TRAIT_TOOL_BLOWTORCH))
-			to_chat(user, SPAN_WARNING("You need a stronger blowtorch!"))
+			to_chat(user, span_warning("You need a stronger blowtorch!"))
 			return
 		handle_repair(O, user)
 		return
 	..()
 
 //repair procs
-/obj/item/hardpoint/proc/handle_repair(obj/item/tool/weldingtool/WT, mob/user)
-	if(user.is_mob_incapacitated())
+/obj/item/hardpoint/proc/handle_repair(obj/item/weldingtool/WT, mob/user)
+	if(is_mob_incapacitated(user))
 		return
 
-	if(health <= 0)
-		to_chat(user, SPAN_WARNING("\The [src] crumbles in your hands to unsalvageable mess."))
+	if(atom_integrity <= 0)
+		to_chat(user, span_warning("\The [src] crumbles in your hands to unsalvageable mess."))
 		qdel(src)
 		return
-	if(health >= initial(health))
-		to_chat(user, SPAN_WARNING("\The [src]s structural integrity is at 100%."))
+	if(atom_integrity >= max_integrity)
+		to_chat(user, span_warning("\The [src]s structural integrity is at 100%."))
 		return
-	if(!WT.isOn())
-		to_chat(user, SPAN_WARNING("You need to light your [WT] first."))
+	if(!WT.tool_start_check(user, amount=1))
+		to_chat(user, span_warning("You need to light your [WT] first."))
 		return
 	if(WT.get_fuel() < 1)
-		to_chat(user, SPAN_WARNING("You need to refill \the [WT] first."))
+		to_chat(user, span_warning("You need to refill \the [WT] first."))
 		return
 	if(being_repaired)
-		to_chat(user, SPAN_WARNING("\The [src] is already being repaired."))
+		to_chat(user, span_warning("\The [src] is already being repaired."))
 		return
 	if(user.action_busy)
 		return
@@ -445,35 +449,35 @@
 	//skill level adjustment: instead of reducing welding time, we increase amount fixed.
 	//Uses skill duration multiplier proc in order to not create a bicycle.
 	var/amount_fixed_adjustment = user.get_skill_duration_multiplier(SKILL_ENGINEER)
-	user.visible_message(SPAN_NOTICE("[user] starts repairing \the [name]."), SPAN_NOTICE("You start repairing \the [name]."))
+	user.visible_message(span_notice("[user] starts repairing \the [name]."), span_notice("You start repairing \the [name]."))
 	playsound(get_turf(user), 'sound/items/weldingtool_weld.ogg', 25)
 	while(WT.get_fuel() > 1)
 		if(!(world.time % 3))
 			playsound(get_turf(user), 'sound/items/weldingtool_weld.ogg', 25)
-		if(!do_after(user, 1 SECONDS, INTERRUPT_ALL, BUSY_ICON_BUILD))
+		if(!cm_do_after(user, 1 SECONDS, src, INTERRUPT_ALL))
 			break
 
 		//we check for adjacency only if we are not installed. This is for turret for now
 		if(!owner && !Adjacent(user))
 			break
 
-		if(!WT.isOn())
-			to_chat(user, SPAN_WARNING("\The [WT] needs to be on!"))
+		if(!WT.tool_start_check(user, amount=1))
+			to_chat(user, span_warning("\The [WT] needs to be on!"))
 			break
 
-		WT.remove_fuel(1, user)
+		WT.use_tool(src, user, 0, amount=1)
 
 		//get_skill_duration_multiplier returns a multiplier, so we delete by it
-		health += initial(health)/100 * (amount_fixed / amount_fixed_adjustment)
-		if(health >= initial(health))
-			health = initial(health)
-			user.visible_message(SPAN_NOTICE("[user] finishes repairing \the [name]."), SPAN_NOTICE("You finish repairing \the [name]. The integrity of the module is at [SPAN_HELPFUL(floor(get_integrity_percent()))]%."))
+		atom_integrity += max_integrity/100 * (amount_fixed / amount_fixed_adjustment)
+		if(atom_integrity >= max_integrity)
+			atom_integrity = max_integrity
+			user.visible_message(span_notice("[user] finishes repairing \the [name]."), span_notice("You finish repairing \the [name]. The integrity of the module is at [span_nicegreen(round(get_integrity_percent()))]%."))
 			being_repaired = FALSE
 			return
-		to_chat(user, SPAN_NOTICE("The integrity of \the [src] is now at [SPAN_HELPFUL(floor(get_integrity_percent()))]%."))
+		to_chat(user, span_notice("The integrity of \the [src] is now at [span_nicegreen(round(get_integrity_percent()))]%."))
 
 	being_repaired = FALSE
-	user.visible_message(SPAN_NOTICE("[user] stops repairing \the [name]."), SPAN_NOTICE("You stop repairing \the [name]. The integrity of the module is at [SPAN_HELPFUL(floor(get_integrity_percent()))]%."))
+	user.visible_message(span_notice("[user] stops repairing \the [name]."), span_notice("You stop repairing \the [name]. The integrity of the module is at [span_nicegreen(round(get_integrity_percent()))]%."))
 	return
 
 /// Setter proc for the automatic firing flag.
@@ -501,10 +505,10 @@
 	if(object == target || object == loc)
 		return
 	if(target)
-		UnregisterSignal(target, COMSIG_PARENT_QDELETING)
+		UnregisterSignal(target, COMSIG_QDELETING)
 	target = object
 	if(target)
-		RegisterSignal(target, COMSIG_PARENT_QDELETING, PROC_REF(clean_target))
+		RegisterSignal(target, COMSIG_QDELETING, PROC_REF(clean_target))
 
 /// Set the target to its turf, so we keep shooting even when it was qdeled.
 /obj/item/hardpoint/proc/clean_target()
@@ -519,7 +523,7 @@
 		return
 
 	if(ammo)
-		to_chat(user, SPAN_WARNING("[name] Ammo: <b>[SPAN_HELPFUL(ammo ? ammo.current_rounds : 0)]/[SPAN_HELPFUL(ammo ? ammo.max_rounds : 0)]</b> | Mags: <b>[SPAN_HELPFUL(LAZYLEN(backup_clips))]/[SPAN_HELPFUL(max_clips)]</b>"))
+		to_chat(user, span_warning("[name] Ammo: <b>[span_nicegreen(ammo ? ammo.current_rounds : 0)]/[span_nicegreen(ammo ? ammo.max_rounds : 0)]</b> | Mags: <b>[span_nicegreen(LAZYLEN(backup_clips))]/[span_nicegreen(max_clips)]</b>"))
 
 /// Reset variables used in firing and remove the gun from the autofire system.
 /obj/item/hardpoint/proc/stop_fire(datum/source, atom/object, turf/location, control, params)
@@ -541,7 +545,7 @@
 
 	if(!auto_firing && !burst_firing && !COOLDOWN_FINISHED(src, fire_cooldown))
 		if(max(fire_delay, burst_delay + extra_delay) >= 2.0 SECONDS) //filter out guns with high firerate to prevent message spam.
-			to_chat(source, SPAN_WARNING("You need to wait [SPAN_HELPFUL(COOLDOWN_SECONDSLEFT(src, fire_cooldown))] seconds before [name] can be used again."))
+			to_chat(source, span_warning("You need to wait [span_nicegreen(COOLDOWN_SECONDSLEFT(src, fire_cooldown))] seconds before [name] can be used again."))
 		return
 
 	set_target(get_turf_on_clickcatcher(object, source, params))
@@ -568,8 +572,8 @@
 
 /// Tests if firing should be interrupted, otherwise fires.
 /obj/item/hardpoint/proc/try_fire(atom/target, mob/living/user, params)
-	if(health <= 0)
-		to_chat(user, SPAN_WARNING("<b>\The [name] is broken!</b>"))
+	if(atom_integrity <= 0)
+		to_chat(user, span_warning("<b>\The [name] is broken!</b>"))
 		return NONE
 
 	if(ammo && ammo.current_rounds <= 0)
@@ -577,7 +581,7 @@
 		return NONE
 
 	if(!in_firing_arc(target))
-		to_chat(user, SPAN_WARNING("<b>The target is not within your firing arc!</b>"))
+		to_chat(user, span_warning("<b>The target is not within your firing arc!</b>"))
 		return NONE
 
 	return handle_fire(target, user, params)
@@ -596,7 +600,8 @@
 		projectile_to_fire.scatter = scatter
 		target = simulate_scatter(projectile_to_fire, target, origin_turf, get_turf(target), user)
 
-	INVOKE_ASYNC(projectile_to_fire, TYPE_PROC_REF(/obj/projectile, fire_at), target, user, src, projectile_to_fire.ammo.max_range, projectile_to_fire.ammo.shell_speed)
+	var/fire_angle = get_angle(origin_turf, target)
+	projectile_to_fire.fire(fire_angle)
 	projectile_to_fire = null
 
 	shots_fired++
@@ -640,7 +645,7 @@
 /obj/item/hardpoint/proc/click_empty(mob/user)
 	playsound(src, 'sound/weapons/gun_empty.ogg', 25, 1, 5)
 	if(user)
-		to_chat(user, SPAN_WARNING("<b>*click*</b>"))
+		to_chat(user, span_warning("<b>*click*</b>"))
 
 /// Selects and plays a firing sound from the list.
 /obj/item/hardpoint/proc/play_firing_sounds()
@@ -685,9 +690,9 @@
 
 //Returns the image object to overlay onto the root object
 /obj/item/hardpoint/proc/get_icon_image(x_offset, y_offset, new_dir)
-	var/is_broken = health <= 0
+	var/is_broken = atom_integrity <= 0
 	var/image/I = image(icon = disp_icon, icon_state = "[disp_icon_state]_[is_broken ? "1" : "0"]", pixel_x = x_offset, pixel_y = y_offset, dir = new_dir)
-	switch(floor((health / initial(health)) * 100))
+	switch(round((atom_integrity / max_integrity) * 100))
 		if(0)
 			I.color = "#888888"
 		if(1 to 20)
@@ -763,9 +768,6 @@
 // debug proc
 /obj/item/hardpoint/proc/set_mf_use_trt(use)
 	use_mz_trt_offsets = use
-
-/obj/item/hardpoint/get_applying_acid_time()
-	return 10 SECONDS //you are not supposed to be able to easily combat-melt irreplaceable things.
 
 /// Proc to be overridden if you want to have special conditions preventing the removal of the hardpoint. Add chat messages in this proc if you want to tell the player why
 /obj/item/hardpoint/proc/can_be_removed(mob/remover)

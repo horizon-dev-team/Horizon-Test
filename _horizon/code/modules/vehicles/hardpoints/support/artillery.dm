@@ -6,7 +6,7 @@
 	disp_icon = "tank"
 	disp_icon_state = "artillerymod"
 
-	health = 250
+	max_integrity = 250
 
 	activatable = TRUE
 
@@ -64,7 +64,7 @@
 	is_active = FALSE
 
 /obj/item/hardpoint/support/artillery_module/try_fire(target, user, params)
-	if(health <= 0)
+	if(atom_integrity <= 0)
 		to_chat(usr, SPAN_WARNING("\The [src] is broken!"))
 		return NONE
 

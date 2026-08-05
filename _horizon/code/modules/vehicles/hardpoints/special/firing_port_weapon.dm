@@ -9,7 +9,7 @@
 	disp_icon_state = ""
 	activation_sounds = list('sound/weapons/gun_smartgun1.ogg', 'sound/weapons/gun_smartgun2.ogg', 'sound/weapons/gun_smartgun3.ogg', 'sound/weapons/gun_smartgun4.ogg')
 
-	health = 100
+	max_integrity = 100
 	firing_arc = 120
 	//FPWs reload automatically
 	var/reloading = FALSE
@@ -61,21 +61,21 @@
 	playsound(owner, 'sound/items/m56dauto_setup.ogg', 50, TRUE)
 
 	if(user && owner.get_mob_seat(user))
-		to_chat(user, SPAN_WARNING("\The [name]'s automated reload is finished. Ammo: <b>[SPAN_HELPFUL(ammo ? ammo.current_rounds : 0)]/[SPAN_HELPFUL(ammo ? ammo.max_rounds : 0)]</b>"))
+		to_chat(user, span_warning("\The [name]'s automated reload is finished. Ammo: <b>[span_nicegreen(ammo ? ammo.current_rounds : 0)]/[span_nicegreen(ammo ? ammo.max_rounds : 0)]</b>"))
 
 /obj/item/hardpoint/special/firing_port_weapon/proc/start_auto_reload(mob/user)
 	if(reloading)
-		to_chat(user, SPAN_WARNING("\The [name] is already being reloaded. Wait [SPAN_HELPFUL("[((reload_time_started + reload_time - world.time) / 10)]")] seconds."))
+		to_chat(user, span_warning("\The [name] is already being reloaded. Wait [span_nicegreen("[((reload_time_started + reload_time - world.time) / 10)]")] seconds."))
 		return
 	if(user)
-		to_chat(user, SPAN_WARNING("\The [name] is out of ammunition! Wait [reload_time / 10] seconds for automatic reload to finish."))
+		to_chat(user, span_warning("\The [name] is out of ammunition! Wait [reload_time / 10] seconds for automatic reload to finish."))
 	reloading = TRUE
 	reload_time_started = world.time
 	addtimer(CALLBACK(src, PROC_REF(reload), user), reload_time)
 
 //try adding magazine to hardpoint's backup clips. Called via weapons loader
 /obj/item/hardpoint/special/firing_port_weapon/try_add_clip(obj/item/ammo_magazine/A, mob/user)
-	to_chat(user, SPAN_NOTICE("\The [name] reloads automatically."))
+	to_chat(user, span_notice("\The [name] reloads automatically."))
 	return FALSE
 
 /obj/item/hardpoint/special/firing_port_weapon/try_fire(atom/target, mob/living/user, params)
@@ -83,27 +83,27 @@
 		return NONE
 
 	//FPW stop working at 50% hull
-	if(owner.health < initial(owner.health) * 0.5)
-		to_chat(user, SPAN_WARNING("<b>\The [owner]'s hull is too damaged!</b>"))
+	if(owner.get_integrity() < owner.max_integrity * 0.5)
+		to_chat(user, span_warning("<b>\The [owner]'s hull is too damaged!</b>"))
 		return NONE
 
 	if(user.get_active_hand())
-		to_chat(user, SPAN_WARNING("You need a free hand to use \the [name]."))
+		to_chat(user, span_warning("You need a free hand to use \the [name]."))
 		return NONE
 
 	if(reloading)
-		to_chat(user, SPAN_NOTICE("\The [name] is reloading. Wait [SPAN_HELPFUL("[((reload_time_started + reload_time - world.time) / 10)]")] seconds."))
+		to_chat(user, span_notice("\The [name] is reloading. Wait [span_nicegreen("[((reload_time_started + reload_time - world.time) / 10)]")] seconds."))
 		return NONE
 
 	if(ammo && ammo.current_rounds <= 0)
 		if(reloading)
-			to_chat(user, SPAN_WARNING("<b>\The [name] is out of ammo! You have to wait [(reload_time_started + reload_time - world.time) / 10] seconds before it reloads!"))
+			to_chat(user, span_warning("<b>\The [name] is out of ammo! You have to wait [(reload_time_started + reload_time - world.time) / 10] seconds before it reloads!"))
 		else
 			start_auto_reload(user)
 		return NONE
 
 	if(!in_firing_arc(target))
-		to_chat(user, SPAN_WARNING("<b>The target is not within your firing arc!</b>"))
+		to_chat(user, span_warning("<b>The target is not within your firing arc!</b>"))
 		return NONE
 
 	return handle_fire(target, user, params)

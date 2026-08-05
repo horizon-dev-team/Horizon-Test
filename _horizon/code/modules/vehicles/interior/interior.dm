@@ -35,10 +35,6 @@
 	var/passengers_slots = 2
 	//common passenger slots taken
 	var/passengers_taken_slots = 0
-	//xenos passenger slots
-	var/xenos_slots = 2
-	//xenos passenger slots taken
-	var/xenos_taken_slots = 0
 
 	//some vehicles have special slots for dead revivable corpses for various reasons
 	//revivable corpses slots
@@ -137,11 +133,9 @@
 /datum/interior/proc/update_passenger_settings()
 	var/obj/vehicle/multitile/V = exterior
 	passengers_slots = V.passengers_slots
-	xenos_slots = V.xenos_slots
 	revivable_dead_slots = V.revivable_dead_slots
 	perma_dead_slots = V.perma_dead_slots
 	passengers_taken_slots = 0
-	xenos_taken_slots = 0
 	revivable_dead_taken_slots = 0
 
 	if(length(V.role_reserved_slots))
@@ -184,13 +178,6 @@
 			if(!role_slot_taken)
 				passengers_taken_slots++
 
-		else if(isxeno(M))
-			var/mob/living/carbon/xenomorph/X = M
-			if(X.stat == DEAD)
-				continue
-			xenos_taken_slots++
-
-
 // Moves the atom to the interior
 /datum/interior/proc/enter(atom/movable/A, entrance_used)
 	if(!ready)
@@ -213,7 +200,8 @@
 	if(ismob(A))
 		M = A
 		for(var/datum/action/minimap/user_map in M.actions)
-			user_map.override_locator(exterior)
+			// TODO: minimap locator override — SSminimaps not fully ported
+			SS_UNUSED(user_map)
 	else
 		var/mobs_amount = 0
 		for(M in A)
@@ -256,15 +244,6 @@
 			if(passengers_taken_slots < passengers_slots)
 				//even if somehow mob moving will fail further down in proc, extra slot taken won't matter, since next update_passenger_count() will fix it
 				passengers_taken_slots++
-			else
-				if(M.stat == CONSCIOUS)
-					to_chat(M, SPAN_WARNING("There's no more space inside!"))
-				return FALSE
-
-	else if(isxeno(M))
-		if(M.stat != DEAD)
-			if(xenos_taken_slots < xenos_slots)
-				xenos_taken_slots++
 			else
 				if(M.stat == CONSCIOUS)
 					to_chat(M, SPAN_WARNING("There's no more space inside!"))
@@ -319,7 +298,8 @@
 	if(ismob(A))
 		mob = A
 		for(var/datum/action/minimap/user_map in mob.actions)
-			user_map.clear_locator_override()
+			// TODO: minimap locator override — SSminimaps not fully ported
+			SS_UNUSED(user_map)
 	A.forceMove(get_turf(exit_turf))
 	update_passenger_count()
 	return TRUE
@@ -331,12 +311,12 @@
 /datum/interior/proc/get_middle_coords()
 	var/turf/min = reservation.bottom_left_turfs[1]
 	var/turf/max = reservation.top_right_turfs[1]
-	return list(floor(min.x + (max.x - min.x)/2), floor(min.y + (max.y - min.y)/2), min.z)
+	return list(round(min.x + (max.x - min.x)/2), round(min.y + (max.y - min.y)/2), min.z)
 
 
 /datum/interior/proc/get_middle_turf()
 	var/list/turf/bounds = get_bound_turfs()
-	var/turf/middle = locate(floor(bounds[1].x + (bounds[2].x - bounds[1].x)/2), floor(bounds[1].y + (bounds[2].y - bounds[1].y)/2), bounds[1].z)
+	var/turf/middle = locate(round(bounds[1].x + (bounds[2].x - bounds[1].x)/2), round(bounds[1].y + (bounds[2].y - bounds[1].y)/2), bounds[1].z)
 
 	return middle
 

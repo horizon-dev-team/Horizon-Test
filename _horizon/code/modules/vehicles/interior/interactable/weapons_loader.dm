@@ -6,9 +6,9 @@
 
 	anchored = TRUE
 	density = TRUE
-	unacidable = TRUE
-	unslashable = TRUE
-	explo_proof = TRUE
+//	unacidable = TRUE
+//	unslashable = TRUE
+//	explo_proof = TRUE
 
 	var/obj/vehicle/multitile/vehicle = null
 

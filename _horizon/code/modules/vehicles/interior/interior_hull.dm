@@ -14,9 +14,9 @@
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	layer = WALL_LAYER
 	flags_atom = NOINTERACT
-	unacidable = TRUE
-	unslashable = TRUE
-	explo_proof = TRUE
+//	unacidable = TRUE
+//	unslashable = TRUE
+//	explo_proof = TRUE
 
 /obj/structure/interior_wall/get_projectile_hit_boolean(obj/projectile/P)
 	return FALSE
@@ -36,8 +36,8 @@
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	layer = ABOVE_FLY_LAYER
 	flags_atom = NOINTERACT
-	unacidable = TRUE
-	explo_proof = TRUE
+//	unacidable = TRUE
+//	explo_proof = TRUE
 
 	alpha = 80
 

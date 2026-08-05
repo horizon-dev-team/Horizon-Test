@@ -20,7 +20,7 @@
 	if(!seat)
 		return
 
-	if(vehicle.health < initial(vehicle.health) * 0.5)
+	if(vehicle.get_integrity() < vehicle.max_integrity * 0.5)
 		to_chat(user, SPAN_WARNING("[vehicle]'s hull is too damaged to operate!"))
 		return
 
@@ -32,7 +32,7 @@
 	if(antenna.deploying)
 		return
 
-	if(antenna.health <= 0)
+	if(antenna.get_integrity() <= 0)
 		to_chat(user, SPAN_WARNING("[antenna] is broken!"))
 		return
 

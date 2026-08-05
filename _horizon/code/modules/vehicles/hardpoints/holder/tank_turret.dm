@@ -27,7 +27,7 @@
 	slot = HDPT_TURRET
 
 	// big beefy chonk of metal
-	health = 450
+	max_integrity = 450
 	damage_multiplier = 0.05
 
 	accepted_hardpoints = list(
@@ -68,26 +68,26 @@
 	extra_delay = 13.0 SECONDS
 
 /obj/item/hardpoint/holder/tank_turret/update_icon()
-	var/broken = (health <= 0)
+	var/broken = (atom_integrity <= 0)
 	icon_state = "tank_turret_[broken]"
 
-	if(health <= initial(health))
+	if(atom_integrity <= max_integrity)
 		var/image/damage_overlay = image(icon, icon_state = "damaged_turret")
-		damage_overlay.alpha = 255 * (1 - (health / initial(health)))
+		damage_overlay.alpha = 255 * (1 - (atom_integrity / max_integrity))
 		overlays += damage_overlay
 
 	..()
 
 /obj/item/hardpoint/holder/tank_turret/get_icon_image(x_offset, y_offset, new_dir)
 	var/icon_state_suffix = "0"
-	if(health <= 0)
+	if(atom_integrity <= 0)
 		icon_state_suffix = "1"
 
 	var/image/I = image(icon = disp_icon, icon_state = "[disp_icon_state]_[icon_state_suffix]", pixel_x = x_offset, pixel_y = y_offset, dir = new_dir)
 
-	if(health <= initial(health))
+	if(atom_integrity <= max_integrity)
 		var/image/damage_overlay = image(icon, icon_state = "damaged_turret")
-		damage_overlay.alpha = 255 * (1 - (health / initial(health)))
+		damage_overlay.alpha = 255 * (1 - (atom_integrity / max_integrity))
 		I.overlays += damage_overlay
 
 	return I
@@ -103,7 +103,7 @@
 			qdel(PC)
 			return TRUE
 
-		if(health < 1)
+		if(atom_integrity < 1)
 			visible_message(SPAN_WARNING("\The [src] disintegrates into useless pile of scrap under the damage it suffered!"))
 			qdel(src)
 			return TRUE
@@ -119,7 +119,7 @@
 
 	data += list(list( // turret smokescreen data
 		"name" = "M34A2-A Turret Smoke Screen",
-		"health" = health <= 0 ? null : floor(get_integrity_percent()),
+		"atom_integrity" = atom_integrity <= 0 ? null : round(get_integrity_percent()),
 		"uses_ammo" = TRUE,
 		"current_rounds" = ammo.current_rounds / 2,
 		"max_rounds"= ammo.max_rounds / 2,
@@ -134,7 +134,7 @@
 
 //gyro ON locks the turret in one direction, OFF will make turret turning when tank turns
 /obj/item/hardpoint/holder/tank_turret/proc/toggle_gyro(mob/user)
-	if(health <= 0)
+	if(atom_integrity <= 0)
 		to_chat(user, SPAN_WARNING("\The [src]'s stabilization systems are busted!"))
 		return
 
@@ -143,7 +143,7 @@
 
 /obj/item/hardpoint/holder/tank_turret/proc/user_rotation(mob/user, deg)
 	// no rotating a broken turret
-	if(health <= 0)
+	if(atom_integrity <= 0)
 		return
 
 	if(rotating)

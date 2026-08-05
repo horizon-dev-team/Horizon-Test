@@ -10,7 +10,7 @@
 	activation_sounds = list('sound/weapons/gun_m60.ogg')
 
 	damage_multiplier = 0.1
-	health = 125
+	max_integrity = 125
 
 	origins = list(0, 0)
 
@@ -150,7 +150,7 @@
 				blocked = TRUE
 				break
 
-			for( var/obj/effect/particle_effect/smoke/smoke in tile)
+			for(var/obj/effect/particle_effect/smoke/smoke in tile)
 				if(!smoke.obscuring)
 					continue
 				blocked = TRUE

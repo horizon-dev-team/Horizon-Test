@@ -6,7 +6,7 @@
 	disp_icon = "tank"
 	disp_icon_state = "ltaaap_minigun"
 
-	health = 350
+	max_integrity = 350
 	firing_arc = 90
 
 	ammo = new /obj/item/ammo_magazine/hardpoint/ltaaap_minigun
@@ -75,8 +75,8 @@
 		return
 	spin_stage = clamp(spin_stage, 1, stage_rate_len)
 
-	var/old_stage_rate = stage_rate[floor(old_spin_stage)]
-	var/new_stage_rate = stage_rate[floor(spin_stage)]
+	var/old_stage_rate = stage_rate[round(old_spin_stage)]
+	var/new_stage_rate = stage_rate[round(spin_stage)]
 
 	if(old_stage_rate != new_stage_rate)
 		scatter = initial(scatter) * (1/new_stage_rate)

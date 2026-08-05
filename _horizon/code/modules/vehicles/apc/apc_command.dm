@@ -65,25 +65,6 @@
 				current_xeno.add_minimap_marker()
 				minimap_added -= WEAKREF(current_xeno)
 
-/obj/vehicle/multitile/apc/command/load_role_reserved_slots()
-	var/datum/role_reserved_slots/RRS = new
-	RRS.category_name = "Crewmen"
-	RRS.roles = list(JOB_TANK_CREW, JOB_UPP_CREWMAN, JOB_PMC_CREWMAN, JOB_ARMY_TANK)
-	RRS.total = 2
-	role_reserved_slots += RRS
-
-	RRS = new
-	RRS.category_name = "Command Staff"
-	RRS.roles = JOB_COMMAND_ROLES_LIST
-	RRS.total = 1
-	role_reserved_slots += RRS
-
-	RRS = new
-	RRS.category_name = "Synthetic Unit"
-	RRS.roles = list(JOB_SYNTH, JOB_WO_SYNTH)
-	RRS.total = 1
-	role_reserved_slots += RRS
-
 /obj/vehicle/multitile/apc/command/add_seated_verbs(mob/living/M, seat)
 	if(!M.client)
 		return

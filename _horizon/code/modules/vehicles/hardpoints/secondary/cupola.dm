@@ -7,7 +7,7 @@
 	disp_icon_state = "m56cupola"
 	activation_sounds = list('sound/weapons/gun_smartgun1.ogg', 'sound/weapons/gun_smartgun2.ogg', 'sound/weapons/gun_smartgun3.ogg', 'sound/weapons/gun_smartgun4.ogg')
 
-	health = 350
+	max_integrity = 350
 	firing_arc = 120
 
 	ammo = new /obj/item/ammo_magazine/hardpoint/m56_cupola

@@ -11,7 +11,7 @@
 
 	damage_multiplier = 0.2
 
-	health = 500
+	max_integrity = 500
 	firing_arc = 60
 
 	origins = list(0, 1)

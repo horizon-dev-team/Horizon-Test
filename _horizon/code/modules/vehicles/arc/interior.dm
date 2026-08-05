@@ -8,6 +8,6 @@
 
 	icon = 'icons/obj/vehicles/interiors/arc_chassis.dmi'
 	icon_state = "arc_chassis"
-	layer = ABOVE_TURF_LAYER
+	layer = ABOVE_NORMAL_TURF_LAYER
 	mouse_opacity = FALSE
 

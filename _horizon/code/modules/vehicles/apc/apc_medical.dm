@@ -29,19 +29,6 @@
 		VEHICLE_GUNNER = null,
 	)
 
-/obj/vehicle/multitile/apc/medical/load_role_reserved_slots()
-	var/datum/role_reserved_slots/RRS = new
-	RRS.category_name = "Crewmen"
-	RRS.roles = list(JOB_TANK_CREW, JOB_UPP_CREWMAN, JOB_PMC_CREWMAN, JOB_ARMY_TANK)
-	RRS.total = 2
-	role_reserved_slots += RRS
-
-	RRS = new
-	RRS.category_name = "Medical Support"
-	RRS.roles = JOB_MEDIC_ROLES_LIST + list(JOB_WO_CMO, JOB_WO_DOCTOR, JOB_WO_RESEARCHER, JOB_SYNTH, JOB_WO_SYNTH)
-	RRS.total = 1
-	role_reserved_slots += RRS
-
 /obj/vehicle/multitile/apc/medical/add_seated_verbs(mob/living/M, seat)
 	if(!M.client)
 		return

@@ -6,7 +6,7 @@
 	disp_icon = "tank"
 	disp_icon_state = "odrive_enhancer"
 
-	health = 250
+	max_integrity = 250
 
 	// 20% movespeed increase. Remember that movespeed is given in delay
 	buff_multipliers = list(
@@ -24,7 +24,7 @@
 	if(buff_applied)
 		return
 	for(var/obj/item/hardpoint/locomotion/TR in V.hardpoints)
-		if(TR.health > 0)
+		if(TR.get_integrity() > 0)
 			V.misc_multipliers["move"] *= LAZYACCESS(buff_multipliers, "move")
 			buff_applied = TRUE
 			break

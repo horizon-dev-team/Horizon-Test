@@ -11,9 +11,9 @@
 	density = FALSE
 	layer = 3.2
 
-	unacidable = TRUE
-	unslashable = TRUE
-	explo_proof = TRUE
+//	unacidable = TRUE
+//	unslashable = TRUE
+//	explo_proof = TRUE
 
 	var/list/role_restriction = list(JOB_TANK_CREW, JOB_UPP_CREWMAN, JOB_PMC_CREWMAN, JOB_ARMY_TANK)
 
@@ -145,7 +145,7 @@
 	name = "wall-mounted surgery kit storage"
 	desc = "A small locker that securely stores a full surgical kit. ID-locked to surgeons."
 	icon_state = "locker_med"
-	role_restriction = list(JOB_CMO, JOB_DOCTOR, JOB_RESEARCHER, JOB_SYNTH, JOB_WO_CMO, JOB_WO_DOCTOR, JOB_WO_RESEARCHER, JOB_SEA, JOB_CLF_MEDIC, "Colonial Doctor", "Sorokyne Strata Doctor", JOB_SYNTH, JOB_WO_SYNTH)
+	role_restriction = list(JOB_CMO, JOB_DOCTOR)
 
 	var/has_tray = TRUE
 
@@ -158,37 +158,11 @@
 		playsound(src.loc, "toolbox", 25, TRUE, 3)
 
 /obj/structure/vehicle_locker/med/update_icon()
+	. = ..()
 	if(has_tray)
 		icon_state = initial(icon_state)
 	else
 		icon_state = "locker_open"
-
-/obj/structure/vehicle_locker/med/Initialize()
-	. = ..()
-	container.max_storage_space = 24
-	container.can_hold = list(
-							/obj/item/tool/surgery,
-							/obj/item/stack/medical/advanced/bruise_pack,
-							/obj/item/stack/nanopaste
-							)
-
-	new /obj/item/tool/surgery/scalpel/pict_system(container)
-	new /obj/item/tool/surgery/scalpel(container)
-	new /obj/item/tool/surgery/hemostat(container)
-	new /obj/item/tool/surgery/retractor(container)
-	new /obj/item/stack/medical/advanced/bruise_pack(container)
-	new /obj/item/tool/surgery/cautery(container)
-	new /obj/item/tool/surgery/circular_saw(container)
-	new /obj/item/tool/surgery/surgicaldrill(container)
-	new /obj/item/tool/surgery/bonegel(container)
-	new /obj/item/tool/surgery/bonesetter(container)
-	new /obj/item/tool/surgery/FixOVein(container)
-	new /obj/item/tool/surgery/surgical_line(container)
-	new /obj/item/stack/nanopaste(container)
-
-/obj/structure/vehicle_locker/med/get_examine_text(mob/user)
-	. = ..()
-	. += has_tray ? SPAN_HELPFUL("Right-click to remove the surgical tray from the locker.") : SPAN_WARNING("The surgical tray has been removed.")
 
 /obj/structure/vehicle_locker/med/attackby(obj/item/W, mob/living/carbon/human/user)
 	if(!Adjacent(user))
