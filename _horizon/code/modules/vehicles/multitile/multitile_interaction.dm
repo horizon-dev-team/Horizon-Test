@@ -9,7 +9,7 @@
 
 	// XENO REMOVED: powerloader clamp logic
 	// if(ispowerclamp(O))
-	//      ...
+	//	  ...
 
 	// Are we trying to remove stuff?
 	if(iscrowbar(O))
@@ -79,11 +79,11 @@
 
 	// XENO REMOVED: grenade throwing logic (CM13-specific grenade type)
 	// if(istype(O, /obj/item/explosive/grenade))
-	//      ...
+	//	  ...
 
 	// XENO REMOVED: motion detector scanning (CM13-specific device)
 	// if(istype(O, /obj/item/device/motiondetector))
-	//      ...
+	//	  ...
 
 	if(user.a_intent != INTENT_HARM)
 		handle_player_entrance(user)
@@ -195,7 +195,7 @@
 
 // XENO REMOVED: /obj/vehicle/multitile/attack_alien — entire proc commented out
 // /obj/vehicle/multitile/attack_alien(mob/living/carbon/xenomorph/X)
-//      ...
+//	  ...
 
 //Differentiates between damage types from different bullets
 //Applies a linear transformation to bullet damage that will generally decrease damage done
@@ -207,7 +207,7 @@
 
 	// XENO REMOVED: IFF bullet check
 	// if(P.runtime_iff_group && get_target_lock(P.runtime_iff_group))
-	//      return
+	//	  return
 
 	take_damage_type(damage * 0.33, dam_type, firer)
 
@@ -336,7 +336,7 @@
 		// now-commented-out grab check above; without it the var is undeclared.
 		// The 2 SECONDS enter_time for dragging a pulled atom is skipped.
 		// if(dragged_atom)
-		//      enter_time = 2 SECONDS
+		//	  enter_time = 2 SECONDS
 
 	to_chat(M, span_notice(enter_msg))
 	if(!cm_do_after(M, enter_time, src, INTERRUPT_NO_NEEDHAND))
@@ -350,27 +350,14 @@
 			to_chat(M, span_warning("\The [src] moved!"))
 			return
 
-/*
-	//Dragged stuff comes with us only if properly waited 2 seconds. No cheating!
-	if(dragged_atom)
-		dragged_atom = null
-		if(istype(M.get_inactive_hand(), /obj/item/grab))
-			var/obj/item/grab/G = M.get_inactive_hand()
-			dragged_atom = G.affecting
-		else if(istype(M.get_active_hand(), /obj/item/grab))
-			var/obj/item/grab/G = M.get_active_hand()
-			dragged_atom = G.affecting
-
-
 	// Transfer them to the interior
-	interior.enter(M, entrance_used)
+	if(QDELETED(interior) || !interior.ready)
+		to_chat(M, span_warning("\The [src]'s interior is not ready yet!"))
+		return
 
-	// We try to make the dragged thing enter last so that the mob who actually entered takes precedence
-	if(dragged_atom)
-		var/success = interior.enter(dragged_atom, entrance_used)
-		if(!success)
-			to_chat(M, span_warning("You fail to fit [dragged_atom] inside \the [src] and leave [ismob(dragged_atom) ? "them" : "it"] outside."))
-*/
+	var/enter_success = interior.enter(M, entrance_used)
+	if(!enter_success)
+		to_chat(M, span_warning("You can't fit inside \the [src]!"))
 
 //try to fit something into the vehicle
 /obj/vehicle/multitile/proc/handle_fitting_pulled_atom(mob/living/carbon/human/user, atom/dragged_atom)
@@ -410,8 +397,8 @@
 	// now-commented-out grab check above; without it the var is undeclared.
 	// The "stop fitting" early-return on a different dragged atom is skipped.
 	// if(currently_dragged != dragged_atom)
-	//      to_chat(user, span_warning("You stop fitting [dragged_atom] inside \the [src]!"))
-	//      return
+	//	  to_chat(user, span_warning("You stop fitting [dragged_atom] inside \the [src]!"))
+	//	  return
 
 	var/success = interior.enter(dragged_atom, entrance_used)
 	if(success)

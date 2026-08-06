@@ -81,3 +81,4 @@
 #include "van\clf_van.dm"
 #include "van\pizza_van.dm"
 #include "van\van.dm"
+#include "_type_stubs\vehicle_floor.dm"

@@ -111,7 +111,7 @@
 
 	//list of stuff we do NOT want to be pulled inside
 	var/list/forbidden_atoms = list(
-//	      /obj/structure/airlock_assembly,
+//		  /obj/structure/airlock_assembly,
 		/obj/structure/barricade,
 		/obj/structure/window,
 		/obj/structure/windoor_assembly,
@@ -192,8 +192,6 @@
 	return INITIALIZE_HINT_LATELOAD
 
 /obj/vehicle/multitile/LateInitialize()
-	. = ..()
-
 	if(interior_map)
 		interior = new(src)
 		INVOKE_ASYNC(src, PROC_REF(do_create_interior))
@@ -265,11 +263,11 @@
 		. += "There is a vehicle clamp attached."
 	// XENO REMOVED: isxeno(user) block commented out
 	// if(isxeno(user) && interior)
-	//      var/passengers_amount = interior.passengers_taken_slots
-	//      for(var/datum/role_reserved_slots/RRS in interior.role_reserved_slots)
-	//	      passengers_amount += RRS.taken
-	//      if(passengers_amount > 0)
-	//	      . += "You can sense approximately [passengers_amount] host\s inside."
+	//	  var/passengers_amount = interior.passengers_taken_slots
+	//	  for(var/datum/role_reserved_slots/RRS in interior.role_reserved_slots)
+	//		  passengers_amount += RRS.taken
+	//	  if(passengers_amount > 0)
+	//		  . += "You can sense approximately [passengers_amount] host\s inside."
 
 /obj/vehicle/multitile/proc/load_hardpoints()
 	return
