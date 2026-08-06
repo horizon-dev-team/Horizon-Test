@@ -205,3 +205,48 @@
 	name = "grab stub"
 	/// CM13 grab.grabbed_thing — the atom being dragged via this grab item.
 	var/atom/movable/grabbed_thing = null
+
+/obj/item/hardpoint/holder/var/list/hardpoints = list()
+
+/obj/item/hardpoint/holder/proc/get_activatable_hardpoints(seat)
+	return list()
+/obj/item/hardpoint/holder/proc/get_hardpoints_with_ammo(seat)
+	return list()
+/obj/item/hardpoint/holder/proc/find_hardpoint(name)
+	return null
+/obj/item/hardpoint/holder/proc/can_install(obj/item/hardpoint/HP)
+	return TRUE
+/obj/item/hardpoint/holder/proc/install(obj/item/hardpoint/HP, mob/user)
+	return
+/obj/item/hardpoint/holder/proc/uninstall(obj/item/hardpoint/old, mob/user)
+	return
+
+/obj/item/hardpoint/holder/tank_turret
+	name = "tank turret (stub)"
+/obj/item/hardpoint/holder/tank_turret/proc/toggle_gyro(mob/user)
+	return
+
+/obj/item/hardpoint/special
+	name = "special hardpoint (stub)"
+
+/obj/item/hardpoint/special/firing_port_weapon
+	name = "firing port weapon (stub)"
+	allowed_seat = null
+	var/reload_time = 0
+	var/reloading = FALSE
+	var/reload_time_started = 0
+
+/obj/item/hardpoint/special/firing_port_weapon/proc/start_auto_reload(mob/user)
+	return
+
+/obj/item/hardpoint/primary/arc_sentry
+	name = "ARC sentry (stub)"
+
+/obj/item/hardpoint/support/arc_antenna
+	name = "ARC antenna (stub)"
+	var/deploying = FALSE
+	var/deploy_animation_time = 0
+/obj/item/hardpoint/support/arc_antenna/proc/deploy_antenna()
+	return
+/obj/item/hardpoint/support/arc_antenna/proc/retract_antenna()
+	return

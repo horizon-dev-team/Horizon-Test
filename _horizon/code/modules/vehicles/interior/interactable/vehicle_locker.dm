@@ -210,9 +210,9 @@
 	// CM13 surgical_tray type is not in active TG includes; istype returns
 	// FALSE safely. The add_tray swap logic is therefore unreachable and
 	// its body is commented out (see remove_tray/add_tray procs below).
-	if(istype(W, /obj/item/storage/surgical_tray))
-		add_tray(user, W)
-		return
+//	if(istype(W, /obj/item/storage/surgical_tray))
+//		add_tray(user, W)
+//		return
 	if(!has_tray)
 		to_chat(user, SPAN_WARNING("\The [name] doesn't have a surgical tray installed!"))
 		return
@@ -310,6 +310,7 @@
 	return
 
 // DISABLED: see remove_tray note above.
+/*
 /obj/structure/vehicle_locker/med/proc/add_tray(mob/living/carbon/human/H, obj/item/storage/surgical_tray/tray)
 	if(has_tray)
 		to_chat(H, SPAN_WARNING("\The [src] already has a surgical tray installed!"))
@@ -334,6 +335,7 @@
 	// update_icon()
 	// H.visible_message(SPAN_NOTICE("[H] installs \the [tray] into \the [src]."), SPAN_NOTICE("You install \the [tray] into \the [src]."))
 	return
+*/
 
 /obj/structure/vehicle_locker/pmc
 	icon = 'icons/obj/vehicles/interiors/general_wy.dmi'

@@ -93,7 +93,7 @@
 
 	var/obj/item/ammo_magazine/M = LAZYACCESS(HP.backup_clips, 1)
 	if(!M)
-		to_chat(user, SPAN_DANGER("Something went wrong! Ahelp this! Code: T_BMIS"))
+		to_chat(user, span_danger("Something went wrong! Ahelp this! Code: T_BMIS"))
 		return
 
 	to_chat(user, SPAN_NOTICE("You begin reloading \the [HP]."))

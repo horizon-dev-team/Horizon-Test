@@ -37,16 +37,20 @@
 	var/target_y = source.y + cos(angle) * range
 	return locate(round(target_x), round(target_y), source.z)
 
-/*
+
 /// Called when a movable atom has hit an atom via movement
 /atom/movable/proc/Collide(atom/A)
 	if (throwing)
-		launch_impact(A)
+		launch_impacts(A)
 
 	if (A && !QDELETED(A))
-		A.last_bumped = world.time
+		//A.last_bumped = world.time
 		A.Collided(src)
-*/
+
+#define COMSIG_STRUCTURE_COLLIDED "structure_collided"
+
+/atom/proc/Collided(atom/movable/AM)
+	return
 
 /// Called when an atom has been hit by a movable atom via movement
 /atom/movable/Collided(atom/movable/collider)
@@ -54,3 +58,45 @@
 		var/target_dir = get_dir(collider, src)
 		var/turf/target_turf = get_step(loc, target_dir)
 		Move(target_turf)
+
+
+//called when src is thrown into hit_atom
+/atom/movable/proc/launch_impacts(atom/hit_atom)
+	if (isliving(hit_atom))
+		mob_launch_collision(hit_atom)
+	else if (isobj(hit_atom)) // Thrown object hits another object and moves it
+		obj_launch_collision(hit_atom)
+	//else if (isturf(hit_atom))
+	//	var/turf/T = hit_atom
+	//	if (T.density)
+	//		turf_launch_collision(T)
+
+	throwing = FALSE
+	//rebounding = FALSE
+
+/atom/movable/proc/mob_launch_collision(mob/living/L)
+	//if (!rebounding)
+	//	L.hitby(src)
+	L.hitby(src)
+
+/atom/movable/proc/obj_launch_collision(obj/O)
+	if (!O.anchored)
+		O.Move(get_step(O, dir))
+	//else if (!rebounding && rebounds)
+	//	var/oldloc = loc
+	//	var/launched_speed = cur_speed
+	//	addtimer(CALLBACK(src, PROC_REF(rebound), oldloc, launched_speed), 0.5)
+
+	//if (!rebounding)
+	//	O.hitby(src)
+
+/*
+/atom/movable/proc/turf_launch_collision(turf/T)
+	if (!rebounding && rebounds)
+		var/oldloc = loc
+		var/launched_speed = cur_speed
+		addtimer(CALLBACK(src, PROC_REF(rebound), oldloc, launched_speed), 0.5)
+
+	if (!rebounding)
+		T.hitby(src)
+*/

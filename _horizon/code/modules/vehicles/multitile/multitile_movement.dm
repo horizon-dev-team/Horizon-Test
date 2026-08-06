@@ -1,30 +1,3 @@
-/*
-	Original movement code was done by Atebite, however due to problems vehicle handling problems I had to simplify it a bit.
-	It had actual momentum, rolling thanks to momentum and so on. We had to cut out any rolling, cause it made vehicle controls
-	pretty inconvenient even without lags. The reason why it wasn't removed entirely is because I want vehicles to keep the ability
-	to achieve top speed, to be able to move actually FAST in long-range travel on big maps, but not have sonic speed during engagements.
-	- Jeser
-
-	original description:
-		Vehicles have momentum, which makes the movement code a bit complex.
-		To avoid race conditions between user inputs and timers for rolling movement,
-		the movement logic is split into 3 parts:
-
-		- Pre-movement, which determines what movement inputs will be considered
-		- Movement, which executes the movement input chosen by the pre-movement proc
-		- Post-movement, which determines if the movement cycle should automatically be repeated
-
-		If the vehicle isn't moving (<= 1 momentum, either direction), the user input is buffered and immediately
-		chosen and executed. This means that users can move single tiles without having the vehicle begin rolling.
-
-		When the vehicle gains more than 1 momentum, rolling kicks in via a timer that calls the movement procs immediately
-		when the movement delay ends. User inputs are still buffered, but the input itself won't cause any movement to occur.
-		If no user input was buffered before this next movement, the vehicle is moved according to its momentum. If there IS
-		buffered user input, the movement code will use the buffered input. Inputs can only be buffered 1ds ahead of the next move.
-
-		Any questions? Ask Atebite
-*/
-
 // Called when someone tries to move the vehicle
 /obj/vehicle/multitile/relaymove(mob/user, direction)
 	if(user != seats[VEHICLE_DRIVER])

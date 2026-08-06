@@ -258,3 +258,9 @@
 // Note: do NOT #define health atom_integrity — this breaks /obj/vehicle and
 // many other TG types that legitimately have a `health` var. Instead, refactor
 // vehicle code that uses `health` to use `get_integrity()` / `atom_integrity`.
+
+#define CAN_PICKUP(user, target) (target.Adjacent(user))
+#define COMSIG_MOB_MOUSEDOWN "mob_mousedown"
+#define COMSIG_MOB_MOUSEUP "mob_mouseup"
+#define COMSIG_MOB_MOUSEDRAG "mob_mousedrag"
+#define COMSIG_MOB_LOGGED_IN COMSIG_MOB_LOGIN

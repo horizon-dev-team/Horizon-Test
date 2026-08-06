@@ -134,13 +134,13 @@
 	var/mob/living/driver = V.get_seat_mob(VEHICLE_DRIVER)
 	var/dmg = FALSE
 	if(V.vehicle_flags & VEHICLE_CLASS_WEAK)
-		if(driver && get_target_lock(driver.faction))
+		if(driver && V.get_target_lock(driver.faction))
 			apply_effect(0.5, EFFECT_KNOCKDOWN)
 		else
 			apply_effect(1, EFFECT_KNOCKDOWN)
 
 	else if(V.vehicle_flags & VEHICLE_CLASS_LIGHT)
-		if(get_target_lock(driver?.faction))
+		if(V.get_target_lock(driver?.faction))
 			apply_effect(0.5, EFFECT_KNOCKDOWN)
 		else
 			apply_effect(2, EFFECT_KNOCKDOWN)
@@ -196,7 +196,7 @@
 				mob_moved = step(src, turn(V.last_move_dir, -direction_taken))
 	else if(V.vehicle_flags & VEHICLE_CLASS_LIGHT)
 		dmg = TRUE
-		if(get_target_lock(driver?.faction))
+		if(V.get_target_lock(driver?.faction))
 			apply_effect(0.5, EFFECT_KNOCKDOWN)
 			apply_damage(5 + rand(0, 5), BRUTE)
 			to_chat(V.seats[VEHICLE_DRIVER], span_warning(span_bold("*YOU RAMMED AN ALLY AND HURT THEM!*")))

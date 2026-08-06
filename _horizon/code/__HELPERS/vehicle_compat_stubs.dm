@@ -380,3 +380,27 @@
 
 /obj/item/proc/zoom(mob/user)
 	return
+
+/mob/proc/is_mob_incapacitated(ignore_flags = FALSE)
+	return HAS_TRAIT(src, TRAIT_INCAPACITATED)
+
+/obj/vehicle/multitile/proc/handle_click(mob/living/user, atom/A, list/mods)
+	return
+
+/obj/vehicle/multitile/var/last_move_dir = SOUTH
+/obj/vehicle/multitile/var/l_move_time = 0
+
+/obj/structure/inflatable
+	name = "inflatable stub"
+	density = FALSE
+	opacity = FALSE
+	anchored = FALSE
+
+/obj/structure/inflatable/proc/deflate(forced = FALSE)
+	return
+
+/proc/show_browser(mob/user, content, title, window_id, width = 0, height = 0, atom/source = null)
+	var/datum/browser/popup = new(user, window_id, title, width, height)
+	popup.set_content(content)
+	popup.open()
+	return
