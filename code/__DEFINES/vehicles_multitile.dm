@@ -171,8 +171,8 @@
 #define FLY_LAYER 5
 #define ABOVE_FLY_LAYER 5.5
 #define ABOVE_XENO_LAYER LARGE_MOB_LAYER
-#define INTERIOR_DOOR_LAYER 3.45
 #define INTERIOR_WALL_SOUTH_LAYER 5.0
+#define INTERIOR_DOOR_LAYER 5.21
 
 // ============================================================================
 // CM13 DO_AFTER FLAGS — TG uses timed_action_flags with IGNORE_* constants
@@ -248,7 +248,6 @@
 // ============================================================================
 
 #define flags_atom obj_flags
-#define NOINTERACT NONE
 #define USES_HEARING (1<<9)
 
 // ============================================================================

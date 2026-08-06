@@ -12,7 +12,7 @@
 	opacity = TRUE
 	anchored = TRUE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
-//	layer = WALL_LAYER
+	layer = WALL_LAYER
 //	flags_atom = NOINTERACT
 //	unacidable = TRUE
 //	unslashable = TRUE
@@ -34,7 +34,7 @@
 	opacity = FALSE
 	anchored = TRUE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
-//	layer = ABOVE_FLY_LAYER
+	layer = ABOVE_FLY_LAYER
 //	flags_atom = NOINTERACT
 //	unacidable = TRUE
 //	explo_proof = TRUE

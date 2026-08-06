@@ -10,7 +10,7 @@
 	anchored = TRUE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	layer = WINDOW_LAYER
-	flags_atom = NOINTERACT
+//	flags_atom = NOINTERACT
 ////	unacidable = TRUE
 
 /obj/effect/vehicle_roof/van
@@ -53,7 +53,7 @@
 	anchored = TRUE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	layer = WINDOW_LAYER
-	flags_atom = NOINTERACT
+//	flags_atom = NOINTERACT
 //	unacidable = TRUE
 
 /obj/effect/vehicle_roof/clf_van
@@ -96,7 +96,7 @@
 	anchored = TRUE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	layer = WINDOW_LAYER
-	flags_atom = NOINTERACT
+//	flags_atom = NOINTERACT
 //	unacidable = TRUE
 
 /obj/effect/vehicle_roof/box_van
@@ -139,7 +139,7 @@
 	anchored = TRUE
 	mouse_opacity = MOUSE_OPACITY_TRANSPARENT
 	layer = WINDOW_LAYER
-	flags_atom = NOINTERACT
+//	flags_atom = NOINTERACT
 //	unacidable = TRUE
 
 /obj/effect/vehicle_roof/pizza_van

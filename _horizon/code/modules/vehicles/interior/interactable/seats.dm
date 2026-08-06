@@ -1,3 +1,9 @@
+/obj/structure/bed/chair/comfy
+	name = "comfy chair"
+	desc = "A chair with leather padding and adjustable headrest. You could probably sit in one of these for ages."
+	icon = '_horizon/icons/chairs.dmi'
+	icon_state = "comfychair"
+
 //regular vehicle seats for general vehicles.
 /obj/structure/bed/chair/comfy/vehicle
 	name = "seat"

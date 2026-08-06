@@ -312,31 +312,12 @@
 			to_chat(M, span_warning("\The [src] is locked!")) //animals are not allowed inside without supervision
 			return
 
-	// Only xenos can force their way in without doors, and only when the frame is completely broken
-	// XENO REMOVED: isxeno check removed
 	if(!entrance_used && get_integrity() > 0)
 		return
 
 	var/enter_msg = "You start climbing into \the [src]..."
-
-/*
-	// Check if drag anything
-	var/atom/dragged_atom
-	if(istype(M.get_inactive_hand(), /obj/item/grab))
-		var/obj/item/grab/G = M.get_inactive_hand()
-		dragged_atom = G.affecting
-	else if(istype(M.get_active_hand(), /obj/item/grab))
-		var/obj/item/grab/G = M.get_active_hand()
-		dragged_atom = G.affecting
-*/
-
 	if(!enter_time)
 		enter_time = entrance_speed
-		// GRAB SYSTEM DISABLED: dragged_atom was previously populated by a
-		// now-commented-out grab check above; without it the var is undeclared.
-		// The 2 SECONDS enter_time for dragging a pulled atom is skipped.
-		// if(dragged_atom)
-		//	  enter_time = 2 SECONDS
 
 	to_chat(M, span_notice(enter_msg))
 	if(!cm_do_after(M, enter_time, src, INTERRUPT_NO_NEEDHAND))

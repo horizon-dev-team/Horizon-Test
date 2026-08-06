@@ -1,5 +1,6 @@
 /obj/effect/landmark/interior
 	name = "interior marker"
+	icon = '_horizon/icons/landmarks.dmi'
 	var/datum/interior/parent
 
 /obj/effect/landmark/interior/proc/on_load(datum/interior/I)
@@ -276,7 +277,7 @@
 	name = "armored vehicle viewport spawner"
 	icon = 'icons/obj/vehicles/interiors/general.dmi'
 	icon_state = "viewport"
-//      layer = INTERIOR_DOOR_LAYER
+	layer = INTERIOR_DOOR_LAYER
 	color = "#009cb8"
 
 /obj/effect/landmark/interior/spawn/interior_viewport/on_load(datum/interior/I)
@@ -300,7 +301,7 @@
 	name = "simple vehicle viewport spawner"
 	icon = 'icons/obj/vehicles/interiors/general.dmi'
 	icon_state = "viewport_simple"
-//      layer = INTERIOR_DOOR_LAYER
+	layer = INTERIOR_DOOR_LAYER
 	color = "#009cb8"
 
 /obj/effect/landmark/interior/spawn/interior_viewport/simple/on_load(datum/interior/I)
@@ -319,7 +320,7 @@
 	name = "windshield viewport spawner"
 	icon = 'icons/obj/vehicles/interiors/van.dmi'
 	icon_state = "windshield_viewport_top"
-//      layer = INTERIOR_DOOR_LAYER
+	layer = INTERIOR_DOOR_LAYER
 	color = "#009cb8"
 	alpha = 80
 
